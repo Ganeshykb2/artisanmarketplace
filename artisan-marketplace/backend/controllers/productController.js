@@ -1,5 +1,5 @@
 // backend/controllers/productController.js
-import Product from '../models/Product.js';
+import Product from '../models/Products.js';
 import Artist from '../models/Artists.js';
 
 export const createProduct = async (req, res) => {

@@ -52,28 +52,32 @@ const ArtistsSchema = new mongoose.Schema({
       type: String,
       required: true,
     },
-    city: {
-      type: String,
-      required: true,
-    },
-    state: {
-      type: String,
-      required: true,
-    },
-    pincode: {
-      type: String,
-      required: true,
-    },
-    rating: {
-      type: Number,
-      min: 0,
-      max: 5,
-      default: 0
-    },
-    aadhar:{
-      type: String,
-      required:true
-    }
+  city: {
+    type: String,
+    required: true,
+  },
+  state: {
+    type: String,
+    required: true,
+  },
+  pincode: {
+    type: String,
+    required: true,
+  },
+  rating: {
+    type: Number,
+    min: 0,
+    max: 5,
+    default: 0
+  },
+  aadhar:{
+    type: String,
+    required:true
+  },
+  verified:{
+    type:Boolean,
+    default:false
+  }
 
 });
 

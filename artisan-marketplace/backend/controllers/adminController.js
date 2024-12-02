@@ -3,6 +3,7 @@ import Products from '../models/Products.js';
 import Orders from '../models/Orders.js';
 import Events from '../models/Events.js';
 import Admins from '../models/Admins.js';
+import { unverifiedArtistsWithOrders } from '../utils/unverifiedArtistsWithOrders.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid'; // Import uuidv4
@@ -16,6 +17,16 @@ export const getAllArtists = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// Function to fetch all unverified artists with 5 or more than 5 orders.
+export const getAllUnverifiedArtistsWithOrders = async (req, res) => {
+  try{
+    const unverifiedArtists = unverifiedArtistsWithOrders();
+    res.status(200).json(unverifiedArtists);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
 
 export const getAllProducts = async (req, res) => {
   try {
@@ -43,6 +54,43 @@ export const getAllEvents = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// Update all Unverified Artists with Orders 5 or more to Verified.
+export const updateAllUnverifiedArtisans = async (req, res) => {
+  try{
+    // Get all Unverified Artists with Order 5 or more.
+    const unverifiedArtists = unverifiedArtistsWithOrders();
+    const artisanIds = unverifiedArtists.map(artisan => artisan._id);
+
+    const result = await Artists.updateMany(
+      { _id: { $in: artisanIds } },
+      { $set: { verified: true } }
+    );
+    res.status(200).json({ message: `${result.modifiedCount} artisans updated to verified.` });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+// Update Unverified Artist with Orders 5 or more to Verified.
+export const updateParticularUnverifiedArtist  = async (req, res) => {
+  try{
+    // Get all Unverified Artists with Order 5 or more.
+    const artistId = req.params.id;
+    const result = await Artists.updateOne(
+      { _id: artistId, verified: false }, // Match the artisan by ID and ensure it's currently unverified
+      { $set: { verified: true } } // Update the `verified` field to true
+    );
+
+    if (result.modifiedCount > 0) {
+      res.status(200).json({ message: `Artisan with ID ${artistId} has been updated to verified.` });
+    } else {
+      res.status(400).json({ message:`No artisan found with ID ${artistId} or already verified.` });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
 
 export const deleteArtist = async (req, res) => {
   try {

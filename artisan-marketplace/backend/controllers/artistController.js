@@ -53,7 +53,6 @@ export const getAllArtists = async (req, res) => {
 };
 
 // Update artist (accessible by the artist or admin)
-// Update artist (accessible by the artist or admin)
 export const updateArtist = async (req, res) => {
   const { id } = req.params;
   const { name, email, businessName, specialization, AboutHimself, address, city, state, pincode } = req.body;

@@ -1,45 +1,83 @@
 import mongoose from 'mongoose';
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4 } from 'uuid';
+
+const OrderItemSchema = new mongoose.Schema({
+  productId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Products', 
+    required: true,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+  price: { 
+    type: Number, 
+    required: true,
+  },
+  quantity: { 
+    type: Number, 
+    required: true,
+  },
+});
 
 const OrdersSchema = new mongoose.Schema({
   orderId: {
     type: String,
     unique: true,
     required: true,
-    default: uuidv4
+    default: uuidv4,
   },
   artisanId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Artists',
-    required: true
+    ref: 'Artisans',
+    required: true,
   },
-  productId: {
+  customerId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Product',
-    required: true
+    ref: 'Customers',
+    required: true,
   },
-  name: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Product',
-    required: true
-  },
-  description: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Product',
-    required: true
-  },
-  price: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Product',
-    required: true
-  },
-  quantity: {
+  items: [OrderItemSchema],
+  totalAmount: {
     type: Number,
+    required: true,
+  },
+  status: {
+    type: String,
+    enum: ['pending', 'shipped', 'delivered', 'cancelled'],
+    default: 'pending',
+  },
+  paymentId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Payments',
+    required: true,
+  },
+  shippingAddress: {
+    type: String,
     required: true,
   },
   createdAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
+  deliveredAt: {
+    type: Date,
+  },
 });
+
+// Add a pre-save to update the updatedAt field
+OrdersSchema.pre('save', function(next) {
+  this.updatedAt = Date.now();
+  next();
+});
+
 export default mongoose.models.Orders || mongoose.model('Orders', OrdersSchema);

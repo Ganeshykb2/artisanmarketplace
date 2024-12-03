@@ -147,6 +147,8 @@ export const loginArtist = async (req, res) => {
     });
   }
 };
+
+
 // http://localhost:5000/api/artists/register POST
 // {
 //   "name": "John Doe",

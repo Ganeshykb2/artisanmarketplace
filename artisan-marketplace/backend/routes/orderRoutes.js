@@ -20,3 +20,4 @@ router.put('/:orderId/status', checkAuth, updateOrderStatus); // Protected route
 router.delete('/:orderId', checkAuth, deleteOrder); // Protected route to delete order
 
 export default router;
+

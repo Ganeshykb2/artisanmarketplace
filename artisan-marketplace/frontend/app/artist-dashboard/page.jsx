@@ -35,6 +35,13 @@ export default function ArtisanDashboard() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold mb-8">Artisan Dashboard</h1>
+      <div className="flex flex-row items-center justify-left">
+        <img src="/path/to/artist/photo.jpg" alt="Artist Photo" className="w-24 h-24 rounded-full mb-4" />
+        <div className="px-5">
+        <h2 className="text-2xl font-bold mb-2"> Jane Doe</h2>
+        <p className="text-lg"> Jane Doe Artistry</p>
+        </div>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>

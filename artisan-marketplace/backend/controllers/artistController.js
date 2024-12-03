@@ -36,7 +36,7 @@ export const createArtist = async (req, res) => {
 
     // Save the new artist to the database
     await newArtist.save();
-    res.status(201).json(newArtist);
+    res.status(201).json({ message: "Artist created successfully", artist: newArtist });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -52,34 +52,38 @@ export const getAllArtists = async (req, res) => {
   }
 };
 
-// Update artist (accessible by the artist or admin)
 export const updateArtist = async (req, res) => {
-  const { id } = req.params;
+  const { artistId } = req.params.id; // This can lead to issues if the route parameter is `id`
   const { name, email, businessName, specialization, AboutHimself, address, city, state, pincode } = req.body;
 
   try {
     // Ensure the logged-in artist can only update their own details, or admin can update any artist
-    if (req.user._id.toString() !== id && req.user.role !== 'admin') {
+    if (req.user.id !== artistId) {
       return res.status(403).json({ message: 'You can only update your own details' });
     }
 
-    const updatedArtist = await Artists.findByIdAndUpdate(id, {
-      name,
-      email,
-      businessName,
-      specialization,
-      AboutHimself,
-      address,
-      city,
-      state,
-      pincode,
-    }, { new: true });
+    const updatedArtist = await Artists.findByIdAndUpdate(
+      id,
+      {
+        name,
+        email,
+        businessName,
+        specialization,
+        AboutHimself,
+        address,
+        city,
+        state,
+        pincode,
+      },
+      { new: true } // Return the updated document
+    );
 
     res.json(updatedArtist);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 
 // Delete artist (accessible by the artist or admin)
@@ -121,17 +125,16 @@ export const loginArtist = async (req, res) => {
 
     // Generate a JWT token for the artist
     const token = jwt.sign(
-      { artistId: artist._id, role: artist.role || 'artist' },  // Include the artist's role in the token
+      { artistId: artist.id, role: artist.role || 'artist' },  // Include the artist's role in the token
       process.env.JWT_SECRET,  // Ensure you have JWT_SECRET in your .env file
       { expiresIn: '1d' }  // Token expiry set to 1 day (adjust as needed)
     );
-
     // Respond with the token and artist data
     res.json({
       message: 'Login successful',
       token,
       artist: {
-        id: artist._id,
+        id: artist.id,
         name: artist.name,
         email: artist.email,
         businessName: artist.businessName,
@@ -170,3 +173,5 @@ export const loginArtist = async (req, res) => {
 //   "password": "securepassword"
 // }
 //http://localhost:5000/api/artists GET 
+// http://localhost:5000/api/artists/:id
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcnRpc3RJZCI6ImRmYWMyZTljLThiNGItNDg5Yy04NWU3LWY4NGViMjQ2YjgxNSIsInJvbGUiOiJhcnRpc3QiLCJpYXQiOjE3MzMyMzU5NjMsImV4cCI6MTczMzMyMjM2M30.eF1timVX8HGktTXAVbWUIbpo-iY948tEXZCMcUV6c9w

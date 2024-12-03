@@ -76,7 +76,6 @@ export const loginCustomer = async (req, res) => {
   }
 };
 
-
 // Fetch customer orders
 export const getCustomerOrders = async (req, res) => {
   try {
@@ -177,7 +176,7 @@ export const getEventByName = async (req, res) => {
   }
 };
 
-// join event by ID
+// Join event by ID
 export const joinEventById = async (req, res) => {
   try {
     const eventId = req.params.eventId; // Event ID from URL parameter
@@ -204,7 +203,7 @@ export const joinEventById = async (req, res) => {
     res.status(500).json({ message: 'Error joining event', error: error.toString() });
   }
 };
-// join event by name
+// Join event by name
 export const joinEventByName = async (req, res) => {
   try {
     const eventName = req.params.eventName; // Event name from URL parameter
@@ -284,8 +283,3 @@ export const getAllArtists = async (req, res) => {
     res.status(500).json({ message: 'Error fetching artists', error: error.toString() });
   }
 };
-
-
-
-
-

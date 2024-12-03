@@ -11,7 +11,7 @@ const artistAuth = async (req, res, next) => {
   try {
     // Verify JWT token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const artist = await Artists.findById(decoded.artistId); // Get the artist from DB using the decoded artistId
+    const artist = await Artists.findById({id:decoded.artistId}); // Get the artist from DB using the decoded artistId
 
     if (!artist) {
       return res.status(404).json({ message: 'Artist not found' });

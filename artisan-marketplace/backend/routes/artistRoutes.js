@@ -17,14 +17,13 @@ router.get('/', getAllArtists);
 // Update artist details (only accessible by the artist after login)
 router.put('/:id', artistAuth, async (req, res) => {
   const artistId = req.params.id;
-
   // Ensure the logged-in artist can only update their own details
-  if (req.user._id.toString() !== artistId) {
+  if (req.user.id !== artistId) {
     return res.status(403).json({ message: 'You can only update your own details.' });
   }
-
   updateArtist(req, res);  // Proceed with the update
 });
+
 
 // Delete artist account (only accessible by the artist after login)
 router.delete('/:id', artistAuth, async (req, res) => {
@@ -34,8 +33,6 @@ router.delete('/:id', artistAuth, async (req, res) => {
   if (req.user._id.toString() !== artistId) {
     return res.status(403).json({ message: 'You can only delete your own account.' });
   }
-
   deleteArtist(req, res);  // Proceed with the delete
 });
-
 export default router;

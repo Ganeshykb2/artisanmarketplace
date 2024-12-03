@@ -14,8 +14,8 @@ export const checkAuth = async (req, res, next) => {
     // Verify the JWT token generated in loginCustomer
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Find the customer to ensure the user exists
-    const customer = await Customer.findById(decoded.customerId);
+    // Find the customer using the custom 'id' field instead of findById
+    const customer = await Customer.findOne({ id: decoded.customerId });
     if (!customer) {
       return res.status(401).json({ message: 'User not found' });
     }

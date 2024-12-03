@@ -27,7 +27,7 @@ const ArtistsSchema = new mongoose.Schema({
     type: String 
   },
   specialization: [{type: String}],
-  createdAt: { type: Date, default: Date.now },
+  
   DOB: {
     type:Date,
     required:true
@@ -73,10 +73,22 @@ const ArtistsSchema = new mongoose.Schema({
     type: String,
     required:true
   },
+  profileImage: {
+    type: String,
+    default: '',
+  },
+  profileViews: {
+    type: Number,
+    default: 0, // Start with 0 views
+  },
   verified:{
     type:Boolean,
     default:false
-  }
+  },
+  createdAt: { 
+    type: Date,
+    default: Date.now 
+  },
 
 });
 

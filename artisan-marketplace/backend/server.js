@@ -1,3 +1,4 @@
+// ./server.js
 import express from 'express';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
@@ -6,10 +7,11 @@ import morgan from 'morgan';
 import dbConnect from './config/dbConnect.js';
 import adminRoutes from './routes/adminRoutes.js';
 import artistRoutes from './routes/artistRoutes.js';
-import customerRoutes from './routes/customerRoutes.js';
+import customerRoutes from './routes/customerRoutes.js'; // Add customer routes
 import orderRoutes from './routes/orderRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import eventRoutes from './routes/eventRoutes.js';
+import paymentRoutes from './routes/paymentRoutes.js'; // Add payment routes
 
 // Load environment variables from .env file
 dotenv.config();
@@ -55,10 +57,11 @@ dbConnect();
 // Use Routes
 app.use('/api/admins', adminRoutes);
 app.use('/api/artists', artistRoutes);
-app.use('/api/customers', customerRoutes);
+app.use('/api/customers', customerRoutes); // customer routes
 app.use('/api/orders', orderRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/events', eventRoutes);
+app.use('/api/payments', paymentRoutes); // Add payment routes
 
 // Global error handling middleware
 app.use((err, req, res, next) => {

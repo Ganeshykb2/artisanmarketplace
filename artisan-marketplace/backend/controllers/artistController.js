@@ -1,3 +1,4 @@
+// artisan-marketplace\backend\controllers\artistController.js
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import Artists from '../models/Artists.js';  

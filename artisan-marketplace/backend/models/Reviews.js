@@ -2,17 +2,17 @@ import mongoose from 'mongoose';
 
 const ReviewSchema = new mongoose.Schema({
   customerId: { 
-    type: mongoose.Schema.Types.ObjectId, 
+    type: String, 
     ref: 'Customers',
     required: true 
   },
   productId: { 
-    type: mongoose.Schema.Types.ObjectId, 
+    type: String, 
     ref: 'Products',
     required: true 
   },
   artistId:{
-    type: mongoose.Schema.Types.ObjectId, 
+    type: String, 
     ref: 'Artists',
     required: true 
   },

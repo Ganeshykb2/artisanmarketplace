@@ -1,5 +1,5 @@
-import bcrypt from 'bcryptjs';  // For password hashing and comparison
-import jwt from 'jsonwebtoken';  // For JWT token generation
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import Artists from '../models/Artists.js';  
 
 // Create new artist (open)
@@ -52,18 +52,13 @@ export const getAllArtists = async (req, res) => {
   }
 };
 
+// Update artist details
 export const updateArtist = async (req, res) => {
-  const { artistId } = req.params.id; // This can lead to issues if the route parameter is `id`
   const { name, email, businessName, specialization, AboutHimself, address, city, state, pincode } = req.body;
 
   try {
-    // Ensure the logged-in artist can only update their own details, or admin can update any artist
-    if (req.user.id !== artistId) {
-      return res.status(403).json({ message: 'You can only update your own details' });
-    }
-
-    const updatedArtist = await Artists.findByIdAndUpdate(
-      id,
+    const updatedArtist = await Artists.findOneAndUpdate(
+      { id: req.user.id },
       {
         name,
         email,
@@ -78,13 +73,11 @@ export const updateArtist = async (req, res) => {
       { new: true } // Return the updated document
     );
 
-    res.json(updatedArtist);
+    res.json({ message: 'Artist updated successfully', artist: updatedArtist });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
-
-
 
 // Delete artist (accessible by the artist or admin)
 export const deleteArtist = async (req, res) => {
@@ -92,11 +85,11 @@ export const deleteArtist = async (req, res) => {
 
   try {
     // logged-in artist can only delete their own account, or admin can delete any artist
-    if (req.user._id !== id && req.user.role !== 'admin') {
+    if (req.user.id !== id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'You can only delete your own account' });
     }
 
-    const deletedArtist = await Artists.findByIdAndDelete(id);
+    const deletedArtist = await Artists.findOneAndDelete({ id });
     if (!deletedArtist) {
       return res.status(404).json({ message: 'Artist not found' });
     }
@@ -129,6 +122,7 @@ export const loginArtist = async (req, res) => {
       process.env.JWT_SECRET,  // Ensure you have JWT_SECRET in your .env file
       { expiresIn: '1d' }  // Token expiry set to 1 day (adjust as needed)
     );
+
     // Respond with the token and artist data
     res.json({
       message: 'Login successful',
@@ -147,6 +141,7 @@ export const loginArtist = async (req, res) => {
     });
   }
 };
+
 
 
 // http://localhost:5000/api/artists/register POST
@@ -175,5 +170,5 @@ export const loginArtist = async (req, res) => {
 //   "password": "securepassword"
 // }
 //http://localhost:5000/api/artists GET 
-// http://localhost:5000/api/artists/:id
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcnRpc3RJZCI6ImRmYWMyZTljLThiNGItNDg5Yy04NWU3LWY4NGViMjQ2YjgxNSIsInJvbGUiOiJhcnRpc3QiLCJpYXQiOjE3MzMyMzU5NjMsImV4cCI6MTczMzMyMjM2M30.eF1timVX8HGktTXAVbWUIbpo-iY948tEXZCMcUV6c9w
+// http://localhost:5000/api/artists/:id -->put
+// http://localhost:5000/api/artists/<artist_id> -->delete

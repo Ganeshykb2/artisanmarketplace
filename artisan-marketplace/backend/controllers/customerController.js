@@ -12,7 +12,6 @@ import Reviews from '../models/Reviews.js';
 export const registerCustomer = async (req, res) => {
   try {
     const { name, email, password, phoneNumber, address, city, state, pincode } = req.body;
-
     // Check if customer already exists
     const existingCustomer = await Customers.findOne({ email });
     if (existingCustomer) {

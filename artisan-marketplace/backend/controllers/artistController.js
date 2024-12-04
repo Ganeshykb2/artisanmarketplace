@@ -5,8 +5,9 @@ import Artists from '../models/Artists.js';
 
 // Create new artist (open)
 export const createArtist = async (req, res) => {
-  const { name, email, password, businessName, specialization, DOB, AboutHimself, contact, address, city, state, pincode, aadhar } = req.body;
-
+  const { name, email, password, businessName, specialization, DOB, AboutHimself, phoneNumber, address, city, state, pincode, aadhar } = req.body;
+  
+  console.log("Console log",req.body);
   try {
     // Check if the artist exists
     const existingArtist = await Artists.findOne({ email });
@@ -17,7 +18,6 @@ export const createArtist = async (req, res) => {
     // Hash password 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-
     // Create new artist instance with hashed password
     const newArtist = new Artists({
       name,
@@ -27,7 +27,7 @@ export const createArtist = async (req, res) => {
       specialization,
       DOB,
       AboutHimself,
-      contact,
+      phoneNumber,
       address,
       city,
       state,
@@ -39,6 +39,7 @@ export const createArtist = async (req, res) => {
     await newArtist.save();
     res.status(201).json({ message: "Artist created successfully", artist: newArtist });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: error.message });
   }
 };

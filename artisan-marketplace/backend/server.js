@@ -75,6 +75,7 @@ app.use((err, req, res, next) => {
 
 // 404 handler for undefined routes
 app.use((req, res, next) => {
+  console.log('Route not found');
   res.status(404).json({ message: 'Route not found' });
 });
 

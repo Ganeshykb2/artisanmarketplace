@@ -7,11 +7,24 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { Checkbox } from '@/components/ui/checkbox'
 import { toast } from '@/hooks/use-toast'
+import { MultiSelect } from '@/components/ui/multi-select'
+
+const specializations = [
+  { label: 'Painting', value: 'painting' },
+  { label: 'Sculpture', value: 'sculpture' },
+  { label: 'Photography', value: 'photography' },
+  { label: 'Digital Art', value: 'digital-art' },
+  { label: 'Illustration', value: 'illustration' },
+  { label: 'Printmaking', value: 'printmaking' },
+];
 
 export default function SignupPage() {
   const [activeTab, setActiveTab] = useState('consumer')
   const [isLoading, setIsLoading] = useState(false)
+  const [selectedSpecializations, setSelectedSpecializations] = useState([])
   const router = useRouter()
 
   const handleSubmit = async (e) => {
@@ -21,9 +34,17 @@ export default function SignupPage() {
     const formData = new FormData(e.target)
     const userData = Object.fromEntries(formData.entries())
     userData.userType = activeTab
+    let url = ""
+    if (activeTab === 'seller') {
+      //userData.specialization = selectedSpecializations
+      url = 'artists'
+    } else {
+      url = "customers"
+    }
 
     try {
-      const response = await fetch('/api/signup', {
+      console.log(userData);
+      const response = await fetch(`http://localhost:5000/api/${url}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData),
@@ -78,6 +99,38 @@ export default function SignupPage() {
                     <Label htmlFor="consumer-password">Password</Label>
                     <Input id="consumer-password" name="password" type="password" placeholder="Create a password" required />
                   </div>
+                  {/* <div>
+                    <Label htmlFor="consumer-dob">Date of Birth</Label>
+                    <Input id="consumer-dob" name="DOB" type="date" required />
+                  </div> */}
+                  {/* <div>
+                    <Label htmlFor="consumer-about">About Yourself</Label>
+                    <Textarea id="consumer-about" name="AboutHimself" placeholder="Tell us about yourself" />
+                  </div> */}
+                  <div>
+                    <Label htmlFor="consumer-contact">Contact Number</Label>
+                    <Input id="consumer-contact" name="phoneNumber" placeholder="Enter your contact number" required />
+                  </div>
+                  {/* <div className="flex items-center space-x-2">
+                    <Checkbox id="consumer-verify" name="contact.verify" />
+                    <Label htmlFor="consumer-verify">Verify contact number</Label>
+                  </div> */}
+                  <div>
+                    <Label htmlFor="seller-address">Address</Label>
+                    <Input id="seller-address" name="address" placeholder="Enter your address" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="seller-city">City</Label>
+                    <Input id="seller-city" name="city" placeholder="Enter your city" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="seller-state">State</Label>
+                    <Input id="seller-state" name="state" placeholder="Enter your state" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="seller-pincode">Pincode</Label>
+                    <Input id="seller-pincode" name="pincode" placeholder="Enter your pincode" required />
+                  </div>
                   <Button type="submit" className="w-full" disabled={isLoading}>
                     {isLoading ? 'Signing Up...' : 'Sign Up as Consumer'}
                   </Button>
@@ -103,9 +156,51 @@ export default function SignupPage() {
                     <Label htmlFor="seller-business-name">Business Name</Label>
                     <Input id="seller-business-name" name="businessName" placeholder="Enter your business name" required />
                   </div>
+                  {/* Don't use this for now.
                   <div>
                     <Label htmlFor="seller-specialization">Specialization</Label>
-                    <Input id="seller-specialization" name="specialization" placeholder="Enter your craft specialization" required />
+                    <MultiSelect
+                      options={specializations}
+                      selected={selectedSpecializations}
+                      onChange={setSelectedSpecializations}
+                      placeholder="Select your specializations"
+                    />
+                  </div> */}
+                  <div>
+                    <Label htmlFor="seller-dob">Date of Birth</Label>
+                    <Input id="seller-dob" name="DOB" type="date" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="seller-about">About Yourself</Label>
+                    <Textarea id="seller-about" name="AboutHimself" placeholder="Tell us about yourself and your business" />
+                  </div>
+                  <div>
+                    <Label htmlFor="seller-contact">Contact Number</Label>
+                    <Input id="seller-contact" name="phoneNumber" placeholder="Enter your contact number" required />
+                  </div>
+                  {/* <div className="flex items-center space-x-2">
+                    <Checkbox id="seller-verify" name="contact.verify" />
+                    <Label htmlFor="seller-verify">Verify contact number</Label>
+                  </div> */}
+                  <div>
+                    <Label htmlFor="seller-address">Address</Label>
+                    <Input id="seller-address" name="address" placeholder="Enter your address" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="seller-city">City</Label>
+                    <Input id="seller-city" name="city" placeholder="Enter your city" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="seller-state">State</Label>
+                    <Input id="seller-state" name="state" placeholder="Enter your state" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="seller-pincode">Pincode</Label>
+                    <Input id="seller-pincode" name="pincode" placeholder="Enter your pincode" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="seller-aadhar">Aadhar Number</Label>
+                    <Input id="seller-aadhar" name="aadhar" placeholder="Enter your Aadhar number" required />
                   </div>
                   <Button type="submit" className="w-full" disabled={isLoading}>
                     {isLoading ? 'Signing Up...' : 'Sign Up as Seller'}
@@ -122,3 +217,4 @@ export default function SignupPage() {
     </div>
   )
 }
+

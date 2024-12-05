@@ -1,3 +1,4 @@
+import { cookies } from 'next/headers';
 import { Inter } from 'next/font/google';
 import Link from 'next/link';
 import { Palette, Menu, ChevronDown, Search, User, ShoppingCart } from 'lucide-react';
@@ -21,7 +22,10 @@ export const metadata = {
   description: 'Discover and support the incredible artisans of Varanasi',
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  const cookieStore = await cookies();
+  const userType = cookieStore.get('type');
+  console.log(userType);
   return (
     <html lang="en">
       <body className={inter.className}>
@@ -38,7 +42,26 @@ export default function RootLayout({ children }) {
                 <nav className="flex items-center space-x-6 text-sm font-medium">
                   <Link href="/" className="hover:text-secondary transition-colors">Home</Link>
                   <Link href="/artisans" className="hover:text-secondary transition-colors">Artisans</Link>
-                  <Link href="/events" className="hover:text-secondary transition-colors">Events</Link>
+                  {
+                    userType === "customer" ? <Link href="/events" className="hover:text-secondary transition-colors">Events</Link>
+                    : <DropdownMenu>
+                    <DropdownMenuTrigger className="flex items-center hover:text-secondary transition-colors">
+                      About <ChevronDown className="ml-1 h-4 w-4" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem>
+                        <Link href="/about" className="flex items-center w-full">
+                          About Us
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <Link href="/contact" className="flex items-center w-full">
+                          Contact Us
+                        </Link>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  }
                   <DropdownMenu>
                     <DropdownMenuTrigger className="flex items-center hover:text-secondary transition-colors">
                       About <ChevronDown className="ml-1 h-4 w-4" />
@@ -176,3 +199,5 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
+
+export const dynamic = 'force-dynamic';

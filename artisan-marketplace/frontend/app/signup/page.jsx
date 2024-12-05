@@ -22,7 +22,7 @@ const specializations = [
 ];
 
 export default function SignupPage() {
-  const [activeTab, setActiveTab] = useState('consumer')
+  const [activeTab, setActiveTab] = useState('customers')
   const [isLoading, setIsLoading] = useState(false)
   const [selectedSpecializations, setSelectedSpecializations] = useState([])
   const router = useRouter()
@@ -34,17 +34,13 @@ export default function SignupPage() {
     const formData = new FormData(e.target)
     const userData = Object.fromEntries(formData.entries())
     userData.userType = activeTab
-    let url = ""
-    if (activeTab === 'seller') {
+    if (activeTab === 'artists') {
       //userData.specialization = selectedSpecializations
-      url = 'artists'
-    } else {
-      url = "customers"
     }
 
     try {
       console.log(userData);
-      const response = await fetch(`http://localhost:5000/api/${url}/register`, {
+      const response = await fetch(`http://localhost:5000/api/${activeTab}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData),
@@ -81,10 +77,10 @@ export default function SignupPage() {
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="consumer">Consumer</TabsTrigger>
-              <TabsTrigger value="seller">Seller</TabsTrigger>
+              <TabsTrigger value="customers">Customer</TabsTrigger>
+              <TabsTrigger value="artists">Artist</TabsTrigger>
             </TabsList>
-            <TabsContent value="consumer">
+            <TabsContent value="customers">
               <form onSubmit={handleSubmit}>
                 <div className="space-y-4">
                   <div>
@@ -137,7 +133,7 @@ export default function SignupPage() {
                 </div>
               </form>
             </TabsContent>
-            <TabsContent value="seller">
+            <TabsContent value="artists">
               <form onSubmit={handleSubmit}>
                 <div className="space-y-4">
                   <div>

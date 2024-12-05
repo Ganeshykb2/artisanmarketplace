@@ -1,13 +1,13 @@
 // backend/routes/productRoutes.js
 import express from 'express';
 import { createProduct, updateProduct, deleteProduct } from '../controllers/productController.js';
-import { checkAuth } from '../middlewares/authMiddleware.js'; // assuming you want to protect these routes
+import artistAuth from '../middlewares/artistAuth.js'; // Import Artist Authorization middleware
 
 const router = express.Router();
 
 // Product routes
-router.post('/create', checkAuth, createProduct); // Protected route
-router.put('/update/:id',checkAuth, updateProduct); // Protected route
-router.delete('/delete/:id', checkAuth, deleteProduct); // Protected route
+router.post('/create', createProduct); // Protected route
+router.put('/update/:id',artistAuth, updateProduct); // Protected route
+router.delete('/delete/:id', artistAuth, deleteProduct); // Protected route
 
 export default router;

@@ -4,23 +4,79 @@ import Artist from '../models/Artists.js';
 
 export const createProduct = async (req, res) => {
   try {
-    const { name, description, price, quantity, images, artistId } = req.body;
+    // Extract product data from the request body
+    const { name, description, price, quantity, images, category, status, discount } = req.body;
+
+    // Get the artistId from the authenticated user (assuming it's attached to the request)
+    // const artistId = req.user.id
+    const artistId = "artistidhgmhdfvhjvn";
+
+    // Create a new product instance
     const newProduct = new Product({
       name,
       description,
       price,
       quantity,
       images,
+      category,
+      status,
+      discount,
       artistId,
     });
 
+    // Save the new product to the database
     await newProduct.save();
+
+    // Return a success response
     res.status(201).json({ message: 'Product created successfully', product: newProduct });
   } catch (error) {
-    res.status(500).json({ message: 'Error creating product', error });
+    // Handle any errors and return an error response
+    console.error('Error creating product:', error);
+    res.status(500).json({ message: 'Error creating product', error: error.message });
   }
 };
 
+
+ /*
+ test payload :{
+  "name": "Handmade Ceramic Mug",
+  "description": "A beautifully crafted handmade ceramic mug perfect for your morning coffee.",
+  "price": 15.99,
+  "quantity": 50,
+  "images": [
+    "https://example.com/images/mug1.jpg",
+    "https://example.com/images/mug2.jpg"
+  ],
+  "category": "Ceramics",
+  "status": "available",
+  "discount": 10
+}
+result: {
+    "message": "Product created successfully",
+    "product": {
+        "name": "Handmade Ceramic Mug",
+        "description": "A beautifully crafted handmade ceramic mug perfect for your morning coffee.",
+        "price": 15.99,
+        "images": [
+            "https://example.com/images/mug1.jpg",
+            "https://example.com/images/mug2.jpg"
+        ],
+        "quantity": 50,
+        "category": "Ceramics",
+        "status": "available",
+        "reviews": [],
+        "averageRating": 0,
+        "salesCount": 0,
+        "discount": 10,
+        "artistId": "artistidhgmhdfvhjvn",
+        "_id": "6751a795622b86f0fd50f2c9",
+        "productId": "ded6d4c9-1bb3-453a-85a7-0d8583600cb5",
+        "createdAt": "2024-12-05T13:16:05.080Z",
+        "updatedAt": "2024-12-05T13:16:05.083Z",
+        "__v": 0
+    }
+}
+*/
 export const updateProduct = async (req, res) => {
   const { id } = req.params;
   try {

@@ -57,8 +57,9 @@ const ProductSchema = new mongoose.Schema({
     default: 0,
   },
   artistId: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Artists',
+    // type: mongoose.Schema.Types.ObjectId, 
+    // ref: 'Artists',
+    type : String,
     required: true,
   },
   eventId: {

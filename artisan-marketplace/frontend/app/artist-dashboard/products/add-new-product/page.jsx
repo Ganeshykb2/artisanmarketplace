@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
+// Component for displaying image previews
 const ImagePreview = ({ image, onRemove, index }) => (
   <div className="relative inline-block mr-2 mb-2">
     <img src={image} alt={`Preview ${index + 1}`} className="w-24 h-24 object-cover rounded-md" />
@@ -17,9 +18,16 @@ const ImagePreview = ({ image, onRemove, index }) => (
 );
 
 export default function AddNewProduct() {
+  // Initialize form handling with React Hook Form
   const { register, handleSubmit, formState: { errors }, setValue } = useForm();
+  // State for managing uploaded images
   const [images, setImages] = useState([]);
 
+    // New state variables for loading and messages
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState({ type: '', content: '' });
+
+  // Function to convert file to base64
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -29,6 +37,7 @@ export default function AddNewProduct() {
     });
   };
 
+  // Handle image file selection
   const handleImageChange = async (e) => {
     const files = Array.from(e.target.files);
     const newImages = [];
@@ -42,54 +51,83 @@ export default function AddNewProduct() {
     setImages([...images, ...newImages]);
   };
 
+  // Remove an image from the selection
   const removeImage = (index) => {
     const newImages = [...images];
     newImages.splice(index, 1);
     setImages(newImages);
   };
 
+  // Update form value when images change
   useEffect(() => {
     setValue('images', images);
   }, [images, setValue]);
 
+  // Handle form submission
   const onSubmit = async (data) => {
+    setIsLoading(true); // Set loading to true when submission starts
+    setMessage({ type: '', content: '' }); // Clear any previous messages
+
     const productData = {
       ...data,
       images: images,
       quantity: parseInt(data.quantity),
       price: parseFloat(data.price),
       discount: parseFloat(data.discount),
-      artistId: "placeholder-artist-id", // This should be replaced with the actual logged-in artist's ID
     };
 
-    console.log(productData);
-    
     try {
-      const response = await fetch('/api/products', {
+      const response = await fetch(`http://localhost:5000/api/products/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+        //   'Authorization': `Bearer ${localStorage.getItem('token')}`, // Include the JWT token
         },
         body: JSON.stringify(productData),
       });
 
-      if (!response.ok) {
+     if (!response.ok) {
         throw new Error('Failed to add product');
       }
 
       const result = await response.json();
       console.log('Product added successfully:', result);
-      // Here you might want to show a success message or redirect the user
+      setMessage({ type: 'success', content: 'Product added successfully!' });
+
+     /// Navigate back after a short delay
+      setTimeout(() => {
+        window.history.back();
+      }, 2000);
+       
     } catch (error) {
       console.error('Error adding product:', error);
-      // Here you might want to show an error message to the user
+      setMessage({ type: 'error', content: 'Failed to add product. Please try again.' });
+    } finally {
+      setIsLoading(false); // Set loading to false when submission ends
     }
   };
 
   return (
     <div className="max-w-2xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Add New Product</h1>
+
+            {/* Display loading message */}
+            {isLoading && (
+        <div className="mb-4 text-center text-blue-600">
+          Loading... Please wait while we add your product.
+        </div>
+      )}
+
+      {/* Display success or error message */}
+      {message.content && (
+        <div className={`mb-4 text-center ${message.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
+          {message.content}
+        </div>
+      )}
+
+
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        {/* Name input field */}
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
           <input
@@ -101,6 +139,7 @@ export default function AddNewProduct() {
           {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
         </div>
 
+        {/* Description input field */}
         <div>
           <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
           <textarea
@@ -112,6 +151,7 @@ export default function AddNewProduct() {
           {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>}
         </div>
 
+        {/* Price input field */}
         <div>
           <label htmlFor="price" className="block text-sm font-medium text-gray-700">Price</label>
           <input
@@ -124,6 +164,7 @@ export default function AddNewProduct() {
           {errors.price && <p className="mt-1 text-sm text-red-600">{errors.price.message}</p>}
         </div>
 
+        {/* Image upload field */}
         <div>
           <label htmlFor="images" className="block text-sm font-medium text-gray-700">
             Images (Upload up to 5, at least 1 required)
@@ -150,6 +191,7 @@ export default function AddNewProduct() {
           {images.length > 0 && <p className="mt-1 text-sm text-gray-600">{images.length} image(s) selected</p>}
         </div>
 
+        {/* Quantity input field */}
         <div>
           <label htmlFor="quantity" className="block text-sm font-medium text-gray-700">Quantity</label>
           <input
@@ -161,6 +203,7 @@ export default function AddNewProduct() {
           {errors.quantity && <p className="mt-1 text-sm text-red-600">{errors.quantity.message}</p>}
         </div>
 
+        {/* Category input field */}
         <div>
           <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</label>
           <input
@@ -172,6 +215,7 @@ export default function AddNewProduct() {
           {errors.category && <p className="mt-1 text-sm text-red-600">{errors.category.message}</p>}
         </div>
 
+        {/* Status select field */}
         <div>
           <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
           <select
@@ -185,6 +229,7 @@ export default function AddNewProduct() {
           </select>
         </div>
 
+        {/* Discount input field */}
         <div>
           <label htmlFor="discount" className="block text-sm font-medium text-gray-700">Discount</label>
           <input
@@ -197,12 +242,16 @@ export default function AddNewProduct() {
           {errors.discount && <p className="mt-1 text-sm text-red-600">{errors.discount.message}</p>}
         </div>
 
+        {/* Submit button */}
         <div>
           <button
             type="submit"
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            disabled={isLoading} // Disable button while loading
+            className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
+              isLoading ? 'bg-gray-400' : 'bg-indigo-600 hover:bg-indigo-700'
+            } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
           >
-            Add Product
+            {isLoading ? 'Adding Product...' : 'Add Product'}
           </button>
         </div>
       </form>

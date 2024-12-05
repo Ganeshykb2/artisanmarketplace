@@ -1,3 +1,4 @@
+// backend\controllers\adminController.js
 import Artists from '../models/Artists.js';
 import Products from '../models/Products.js';
 import Orders from '../models/Orders.js';
@@ -6,7 +7,7 @@ import Admins from '../models/Admins.js';
 import { unverifiedArtistsWithOrders } from '../utils/unverifiedArtistsWithOrders.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { v4 as uuidv4 } from 'uuid'; // Import uuidv4
+import { v4 as uuidv4 } from 'uuid';
 
 
 export const getAllArtists = async (req, res) => {
@@ -57,22 +58,30 @@ export const getAllEvents = async (req, res) => {
 
 // Update all Unverified Artists with Orders 5 or more to Verified.
 export const updateAllUnverifiedArtisans = async (req, res) => {
-  try{
+  try {
     // Get all Unverified Artists with Order 5 or more.
-    const unverifiedArtists = unverifiedArtistsWithOrders();
+    const unverifiedArtists = await unverifiedArtistsWithOrders(); // Await the function if it's asynchronous
+
+    // Ensure the result is an array
+    if (!Array.isArray(unverifiedArtists)) {
+      throw new Error("unverifiedArtistsWithOrders did not return an array.");
+    }
+
     const artisanIds = unverifiedArtists.map(artisan => artisan._id);
 
     const result = await Artists.updateMany(
       { _id: { $in: artisanIds } },
       { $set: { verified: true } }
     );
+
     res.status(200).json({ message: `${result.modifiedCount} artisans updated to verified.` });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-}
+};
 
-// Update Unverified Artist with Orders 5 or more to Verified.
+
+// Update particular Unverified Artist with Orders 5 or more to Verified.
 export const updateParticularUnverifiedArtist  = async (req, res) => {
   try{
     // Get all Unverified Artists with Order 5 or more.
@@ -162,3 +171,24 @@ export const adminLogin = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// http://localhost:5000/api/admins/register  --> POST request
+// {
+//   "name": "Admin Name",
+//   "username": "admin_username",
+//   "email": "admin@example.com",
+//   "password": "securepassword"
+// }
+// http://localhost:5000/api/admins/login --> POST request
+//{
+// "username": "admin_username",
+// "password": "securepassword"
+// }
+// http://localhost:5000/api/admins/artists -->get request
+// http://localhost:5000/api/admins/unverified-artists -->get Request
+// http://localhost:5000/api/admins/products -->get request
+// http://localhost:5000/api/admins/orders --> get request
+// http://localhost:5000/api/admins/events -->get request
+// 
+
+

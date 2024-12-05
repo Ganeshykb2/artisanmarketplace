@@ -36,16 +36,10 @@ const ArtistsSchema = new mongoose.Schema({
     type : String,
     required:true
   },
-  contact:{
-    value:{
-    type:String,
-    required:true,
-    unique:true
-    },
-    verify: {
-      type:Boolean,
-      default:false
-    }
+  phoneNumber: {
+    type: String,
+    required: true,
+    unique: true
   },
   address: {
       type: String,

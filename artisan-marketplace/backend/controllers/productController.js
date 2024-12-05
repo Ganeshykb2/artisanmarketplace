@@ -77,6 +77,8 @@ result: {
     }
 }
 */
+
+
 export const updateProduct = async (req, res) => {
   const { id } = req.params;
   try {
@@ -100,5 +102,27 @@ export const deleteProduct = async (req, res) => {
     res.json({ message: 'Product deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Error deleting product', error });
+  }
+};
+
+export const getArtistProduct = async (req, res) => {
+  try {
+    // Get the artistId from the authenticated user (assuming it's attached to the request)
+    // const artistId = req.user.id;
+    const artistId = "artistidhgmhdfvhjvn"; // Placeholder artistId
+
+    // Fetch products for the specific artist from the database
+    const products = await Product.find({ artistId });
+
+    if (products.length === 0) {
+      return res.status(404).json({ message: 'No products found for this artist' });
+    }
+
+    // Return the fetched products
+    res.status(200).json({ message: 'Products fetched successfully', products });
+  } catch (error) {
+    // Handle any errors and return an error response
+    console.error('Error fetching products:', error);
+    res.status(500).json({ message: 'Error fetching products', error: error.message });
   }
 };

@@ -16,13 +16,8 @@ export const validToken = async (req, res) => {
     // Verify the JWT token generated in loginCustomer
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Find the customer using the custom 'id' field instead of findById
-    // if(decoded?.exp){
-    //     return res.status(401).json({ message: 'Token expired' });
-    // }
     if(decoded?.artistId){
         const artist = await Artists.findOne({ id: decoded.artistId });
-        req.user = artist;
         artist ? res.status(200).json({ message: 'Token is valid', artist:  {
             id: artist.id,
             name: artist.name,
@@ -31,7 +26,6 @@ export const validToken = async (req, res) => {
         }) : res.status(401).json({ message: 'User not found' })
     }else if(decoded?.adminId){
         const admin = await Admins.findOne({ id: decoded.adminId });
-        req.user = admin;
         admin ? res.status(200).json({ message: 'Token is valid', admin: {
             id: admin.id,
             name: admin.name,
@@ -41,7 +35,6 @@ export const validToken = async (req, res) => {
     }
     else if(decoded?.customerId){
         const customer = await Customer.findOne({ id: decoded.customerId });
-        req.user = customer;
         customer ? res.status(200).json({ message: 'Token is valid', customer: {
             id: customer.id,
             name: customer.name,

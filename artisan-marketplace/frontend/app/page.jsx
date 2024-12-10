@@ -1,20 +1,22 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, ShoppingCart } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-
+import { useUser } from './UserProvider'
 
 export default function Home() {
+
+  const {userName} = useUser();
 
   return (
     <main className="flex-grow container mx-auto px-4 py-8">
         <div className="space-y-12">
           <section className="text-center">
-            <h1 className="text-4xl font-bold mb-4">Welcome to Artisan Marketplace</h1>
+            <h1 className="text-4xl font-bold mb-4">{userName ? `Welcome ${userName?.value} to Artisan Marketplace` :`Welcome to Artisan Marketplace`}</h1>
             <p className="text-xl mb-8">Discover and support the incredible artisans of Varanasi</p>
             <Button asChild>
               <Link href="/products">

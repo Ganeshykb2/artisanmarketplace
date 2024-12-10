@@ -27,7 +27,7 @@ export default function LoginPage() {
       })
       const user = await response.json();
       if(response.ok){
-        router.push('/')
+        window.location.href = '/';
       } else{
         setMessage(user?.message)
         toast({

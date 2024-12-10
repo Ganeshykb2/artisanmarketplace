@@ -28,7 +28,6 @@ const inter = Inter({ subsets: ['latin'] });
 export default function RootLayout({ children }) {
 
   const[user,setUser] = useState({});
-  const[client,setClient] = useState(false);
 
   useEffect(()=>{
     const getUser = async () =>{
@@ -44,7 +43,6 @@ export default function RootLayout({ children }) {
       }
     }
     getUser();
-    setClient(true);
   },[]);
 
   const logoutHandle =  async ()=>{
@@ -67,9 +65,10 @@ export default function RootLayout({ children }) {
   return (
     
     <>
-      {client? <html lang="en">
-      <body className={inter.className}>
-        <UserProvider user={user}>
+      <UserProvider user={user}>
+      <html lang="en">
+      <body suppressHydrationWarning={true} className={inter.className}>
+        
         <div className="flex flex-col min-h-screen">
           <header className="sticky top-0 z-50 w-full border-b bg-primary text-primary-foreground">
             <div className="container flex h-16 items-center">
@@ -251,9 +250,9 @@ export default function RootLayout({ children }) {
             </div>
           </footer>
         </div>
-        </UserProvider>
       </body>
-    </html>:<p>Loading</p>}
+    </html>
+    </UserProvider>
     </>
     
   );

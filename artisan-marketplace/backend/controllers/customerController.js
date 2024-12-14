@@ -51,7 +51,7 @@ export const loginCustomer = async (req, res) => {
 
     const isMatch = await bcrypt.compare(password, customer.password);
     if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
 
     // Create JWT token
@@ -64,10 +64,11 @@ export const loginCustomer = async (req, res) => {
     res.json({
       message: 'Login successful',
       token,
-      customer: {
+      user: {
         id: customer.id,
         name: customer.name,
-        email: customer.email
+        email: customer.email,
+        userType: 'customer'
       }
     });
   } catch (error) {

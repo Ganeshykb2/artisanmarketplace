@@ -6,13 +6,45 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
+import { toast } from '@/hooks/use-toast'
+import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
-  const [activeTab, setActiveTab] = useState('consumer')
+  const [activeTab, setActiveTab] = useState('customers')
+  const [message, setMessage] = useState("");
+  const router = useRouter()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // Handle login logic here
+    const formData = new FormData(e.target)
+    const userData = Object.fromEntries(formData.entries())
+    userData.userType = activeTab
+    try{
+      const response = await fetch(`/login/api`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+      })
+      const user = await response.json();
+      if(response.ok){
+        window.location.href = '/';
+      } else{
+        setMessage(user?.message)
+        toast({
+          title: "Error",
+          description: user?.message,
+          variant: "destructive",
+        })
+      }
+    } catch(err){
+      setMessage("Something went wrong")
+      toast({
+        title: "Error",
+        description: "Something went wrong",
+        variant: "destructive",
+      })
+      console.log(err);
+    }
     console.log(`${activeTab} login submitted`)
   }
 
@@ -26,37 +58,44 @@ export default function LoginPage() {
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="consumer">Consumer</TabsTrigger>
-              <TabsTrigger value="seller">Seller</TabsTrigger>
+              <TabsTrigger value="customers">Customer</TabsTrigger>
+              <TabsTrigger value="artists">Artist</TabsTrigger>
             </TabsList>
-            <TabsContent value="consumer">
+            <TabsContent value="customers">
               <form onSubmit={handleSubmit}>
                 <div className="space-y-4">
                   <div>
                     <Label htmlFor="consumer-email">Email</Label>
-                    <Input id="consumer-email" type="email" placeholder="Enter your email" required />
+                    <Input id="consumer-email" type="email" name="email" placeholder="Enter your email" required />
                   </div>
                   <div>
                     <Label htmlFor="consumer-password">Password</Label>
-                    <Input id="consumer-password" type="password" placeholder="Enter your password" required />
+                    <Input id="consumer-password" type="password" name="password" placeholder="Enter your password" required />
                   </div>
                   <Button type="submit" className="w-full">Login as Consumer</Button>
+                  <div>
+                  {message&&<p className='text-red-500 text-center'>{message}</p>}
+                  </div>
                 </div>
               </form>
             </TabsContent>
-            <TabsContent value="seller">
+            <TabsContent value="artists">
               <form onSubmit={handleSubmit}>
                 <div className="space-y-4">
                   <div>
                     <Label htmlFor="seller-email">Email</Label>
-                    <Input id="seller-email" type="email" placeholder="Enter your email" required />
+                    <Input id="seller-email" type="email" name="email" placeholder="Enter your email" required />
                   </div>
                   <div>
                     <Label htmlFor="seller-password">Password</Label>
-                    <Input id="seller-password" type="password" placeholder="Enter your password" required />
+                    <Input id="seller-password" type="password" name="password" placeholder="Enter your password" required />
                   </div>
                   <Button type="submit" className="w-full">Login as Seller</Button>
+                  <div>
+                  {message&&<p className='text-red'>{message}</p>}
+                  </div>
                 </div>
+                
               </form>
             </TabsContent>
           </Tabs>

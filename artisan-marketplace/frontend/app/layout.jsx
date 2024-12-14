@@ -1,6 +1,8 @@
+'use client'
+
 import { Inter } from 'next/font/google';
 import Link from 'next/link';
-import { Palette, Menu, ChevronDown, Search, User, ShoppingCart } from 'lucide-react';
+import { Palette, Menu, ChevronDown, Search, User, ShoppingCart, LogOut, LogIn, UserPlus, UserCircle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -13,18 +15,60 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import './globals.css';
+import { useEffect, useState } from 'react';
+import { UserProvider } from './UserProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
-export const metadata = {
-  title: 'Artisan Marketplace',
-  description: 'Discover and support the incredible artisans of Varanasi',
-};
+// export const metadata = {
+//   title: 'Artisan Marketplace',
+//   description: 'Discover and support the incredible artisans of Varanasi',
+// };
 
 export default function RootLayout({ children }) {
+
+  const[user,setUser] = useState({});
+
+  useEffect(()=>{
+    const getUser = async () =>{
+      try{
+        const res = await fetch("api/cookies",{
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        });
+        const userDetails = await res?.json();
+        setUser(userDetails?.user);
+      } catch(err){
+        console.log(err);
+      }
+    }
+    getUser();
+  },[]);
+
+  const logoutHandle =  async ()=>{
+    try{
+      const res = await fetch("api/logout",{
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+  
+      if(res.ok){
+        window.location.href = "/";
+      }
+    }catch(err){
+      console.log(err);
+    }
+     
+  }
+  
+  
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    
+    <>
+      <UserProvider user={user}>
+      <html lang="en">
+      <body suppressHydrationWarning={true} className={inter.className}>
+        
         <div className="flex flex-col min-h-screen">
           <header className="sticky top-0 z-50 w-full border-b bg-primary text-primary-foreground">
             <div className="container flex h-16 items-center">
@@ -38,7 +82,26 @@ export default function RootLayout({ children }) {
                 <nav className="flex items-center space-x-6 text-sm font-medium">
                   <Link href="/" className="hover:text-secondary transition-colors">Home</Link>
                   <Link href="/artisans" className="hover:text-secondary transition-colors">Artisans</Link>
-                  <Link href="/events" className="hover:text-secondary transition-colors">Events</Link>
+                  {
+                    user?.userType?.value === "artist" ?<DropdownMenu>
+                    <DropdownMenuTrigger className="flex items-center hover:text-secondary transition-colors">
+                      Event <ChevronDown className="ml-1 h-4 w-4" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem>
+                        <Link href="/events" className="flex items-center w-full">
+                          View Events
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <Link href="/manage-events" className="flex items-center w-full">
+                          Manage Events
+                        </Link>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu> 
+                    : <Link href="/events" className="hover:text-secondary transition-colors">Events</Link>
+                  }
                   <DropdownMenu>
                     <DropdownMenuTrigger className="flex items-center hover:text-secondary transition-colors">
                       About <ChevronDown className="ml-1 h-4 w-4" />
@@ -70,18 +133,33 @@ export default function RootLayout({ children }) {
                       <span className="sr-only">Account menu</span>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
+                  {user?.userName? <DropdownMenuContent align="end">
                     <DropdownMenuItem>
-                      <Link href="/login" className="flex items-center w-full">
+                      <Link href="/login" className="flex items-center w-full gap-2">
+                        <UserCircle className="h-5 w-5" />
+                        {user?.userName?.value}
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Link href="" onClick={logoutHandle} className="flex items-center w-full gap-2">
+                      <LogOut className="h-5 w-5" />
+                        Log out
+                      </Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent> :<DropdownMenuContent align="end">
+                    <DropdownMenuItem>
+                      <Link href="/login" className="flex items-center w-full gap-2">
+                      <LogIn className="h-5 w-5" />
                         Login
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
-                      <Link href="/signup" className="flex items-center w-full">
+                      <Link href="/signup" className="flex items-center w-full gap-2">
+                      <UserPlus className="h-5 w-5" />
                         Sign Up
                       </Link>
                     </DropdownMenuItem>
-                  </DropdownMenuContent>
+                  </DropdownMenuContent>}
                 </DropdownMenu>
                 <Button variant="ghost" size="icon">
                   <ShoppingCart className="h-5 w-5" />
@@ -132,7 +210,7 @@ export default function RootLayout({ children }) {
           </header>
 
           <main className="flex-grow">
-            {children}
+          {children}
           </main>
 
           <footer className="bg-primary text-primary-foreground py-8">
@@ -174,5 +252,36 @@ export default function RootLayout({ children }) {
         </div>
       </body>
     </html>
+    </UserProvider>
+    </>
+    
   );
 }
+
+export const dynamic = 'force-dynamic';
+
+/*
+      userDetails Output Structure
+       user: {
+            "userId": {
+                "name": "id",
+                "value": "7daff2da-a81e-4ffb-bc93-8be8b45bcd5e",
+                "path": "/"
+            },
+            "userName": {
+                "name": "name",
+                "value": "Ganesh Kumar",
+                "path": "/"
+            },
+            "userEmail": {
+                "name": "email",
+                "value": "gani@gmail.com",
+                "path": "/"
+            },
+            "userType": {
+                "name": "type",
+                "value": "customer",
+                "path": "/"
+            }
+        }
+      */

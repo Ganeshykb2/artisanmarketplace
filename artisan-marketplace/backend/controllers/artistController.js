@@ -129,10 +129,11 @@ export const loginArtist = async (req, res) => {
     res.json({
       message: 'Login successful',
       token,
-      artist: {
+      user: {
         id: artist.id,
         name: artist.name,
         email: artist.email,
+        userType: 'artist',
         businessName: artist.businessName,
       },
     });

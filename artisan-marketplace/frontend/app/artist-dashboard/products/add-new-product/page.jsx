@@ -80,31 +80,30 @@ export default function AddNewProduct() {
     };
 
     try {
-      const response = await fetch(`http://localhost:5000/api/products/create`, {
+      const response = await fetch(`/artist-dashboard/products/add-new-product/api`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-        //   'Authorization': `Bearer ${localStorage.getItem('token')}`, // Include the JWT token
         },
         body: JSON.stringify(productData),
       });
 
-     if (!response.ok) {
-        throw new Error('Failed to add product');
-      }
-
       const result = await response.json();
+      if (!response.ok) {
+        setMessage({type: 'error', content: 'Failed to add product' || result?.message});
+        throw new Error("Failed to add product");
+      }
       console.log('Product added successfully:', result);
-      setMessage({ type: 'success', content: 'Product added successfully!' });
+      setMessage({ type: 'success', content: 'Product added successfully!' || result?.message});
 
      /// Navigate back after a short delay
-      setTimeout(() => {
-        window.history.back();
-      }, 2000);
+      // setTimeout(() => {
+      //   window.history.back();
+      // }, 2000);
        
     } catch (error) {
       console.error('Error adding product:', error);
-      setMessage({ type: 'error', content: 'Failed to add product. Please try again.' });
+      setMessage({ type: 'error', content: 'Failed to add product. Please try again.' || result?.message});
     } finally {
       setIsLoading(false); // Set loading to false when submission ends
     }

@@ -32,7 +32,7 @@ export default function RootLayout({ children }) {
   useEffect(()=>{
     const getUser = async () =>{
       try{
-        const res = await fetch("api/cookies",{
+        const res = await fetch("/api/cookies",{
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },
         });
@@ -47,7 +47,7 @@ export default function RootLayout({ children }) {
 
   const logoutHandle =  async ()=>{
     try{
-      const res = await fetch("api/logout",{
+      const res = await fetch("/api/logout",{
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -135,7 +135,7 @@ export default function RootLayout({ children }) {
                   </DropdownMenuTrigger>
                   {user?.userName? <DropdownMenuContent align="end">
                     <DropdownMenuItem>
-                      <Link href="/login" className="flex items-center w-full gap-2">
+                      <Link href={`/${user?.userType?.value}-dashboard`} className="flex items-center w-full gap-2">
                         <UserCircle className="h-5 w-5" />
                         {user?.userName?.value}
                       </Link>

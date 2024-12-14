@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useUser } from '@/app/UserProvider';
 
 const useImageCarousel = (images) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -19,20 +20,25 @@ const useImageCarousel = (images) => {
   return { currentImageIndex, nextImage, prevImage };
 };
 
-export default function ProductsPage({ initialProducts, error }) {
-  const [products, setProducts] = useState(initialProducts || []);
-  const [loading, setLoading] = useState(!initialProducts && !error);
+export default function ProductsPage({ error }) {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(!error);
+  const [message, setMessage] = useState("");
+  const { userId } = useUser();
 
   useEffect(() => {
-    if (!initialProducts && !error) {
+    if (!error) {
       const fetchProducts = async () => {
         try {
-          const response = await fetch('http://localhost:5000/api/products/artistsproducts');
-          if (!response.ok) {
-            throw new Error('Failed to fetch products');
-          }
+          const response = await fetch(`/artist-dashboard/products/api`);
           const data = await response.json();
-          setProducts(data.products);
+          if (!response.ok) {
+            setMessage(data?.message);
+          }
+          if(response.status === 404){
+            setMessage(data?.message);
+          }
+          setProducts(data?.products);
         } catch (err) {
           console.error(err);
         } finally {
@@ -42,8 +48,7 @@ export default function ProductsPage({ initialProducts, error }) {
 
       fetchProducts();
     }
-  }, []);
-
+  }, [userId?.value]);
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
@@ -54,9 +59,9 @@ export default function ProductsPage({ initialProducts, error }) {
         Add New Product
       </a>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {products.map((product) => (
+        {products?.length >= 1 ?products.map((product) => (
           <ProductCard key={product._id} product={product} />
-        ))}
+        )) : <div>{message}</div>}
       </div>
     </div>
   );

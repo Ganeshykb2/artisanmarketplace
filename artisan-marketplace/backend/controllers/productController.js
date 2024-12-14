@@ -1,6 +1,7 @@
 // backend/controllers/productController.js
 import Product from '../models/Products.js';
 import Artist from '../models/Artists.js';
+import Artists from '../models/Artists.js';
 
 export const createProduct = async (req, res) => {
   try {
@@ -8,8 +9,8 @@ export const createProduct = async (req, res) => {
     const { name, description, price, quantity, images, category, status, discount } = req.body;
 
     // Get the artistId from the authenticated user (assuming it's attached to the request)
-    // const artistId = req.user.id
-    const artistId = "artistidhgmhdfvhjvn";
+    const artistId = req.user.id;
+    // const artistId = "artistidhgmhdfvhjvn";
 
     // Create a new product instance
     const newProduct = new Product({
@@ -133,11 +134,11 @@ export const getFeaturedProducts = async (req, res) => {
 export const getArtistProduct = async (req, res) => {
   try {
     // Get the artistId from the authenticated user (assuming it's attached to the request)
-    // const artistId = req.user.id;
-    const artistId = "artistidhgmhdfvhjvn"; // Placeholder artistId
+    const {artistId} = req.params;
+    // const artistId = "artistidhgmhdfvhjvn"; // Placeholder artistId
 
     // Fetch products for the specific artist from the database
-    const products = await Product.find({ artistId });
+    const products = await Product.find({artistId});
 
     if (products.length === 0) {
       return res.status(404).json({ message: 'No products found for this artist' });

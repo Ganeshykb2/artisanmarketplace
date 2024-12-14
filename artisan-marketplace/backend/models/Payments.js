@@ -8,17 +8,17 @@ const PaymentSchema = new mongoose.Schema({
     default: () => uuidv4(),
   },
   orderId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: 'Orders',
     required: true,
   },
   customerId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: 'Customers',
     required: true,
   },
   artisanId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: 'Artists',
     required: true,
   },

@@ -39,7 +39,7 @@ const ProductSchema = new mongoose.Schema({
     default: 'available',
   },
   reviews: [{
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: 'Reviews',
   }],
   averageRating: {
@@ -57,13 +57,12 @@ const ProductSchema = new mongoose.Schema({
     default: 0,
   },
   artistId: { 
-    // type: mongoose.Schema.Types.ObjectId, 
-    // ref: 'Artists',
-    type : String,
+    type: String, 
+    ref: 'Artists',
     required: true,
   },
   eventId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: 'Events',
   },
   createdAt: {

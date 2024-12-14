@@ -47,7 +47,7 @@ const CustomersSchema = new mongoose.Schema({
     default: Date.now
   },
   purchaseHistory: [{
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: 'Orders',  // Reference to Orders collection
     default: ''
   }],

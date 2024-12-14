@@ -175,3 +175,26 @@ export const loginArtist = async (req, res) => {
 //http://localhost:5000/api/artists GET 
 // http://localhost:5000/api/artists/:id -->put
 // http://localhost:5000/api/artists/<artist_id> -->delete
+// Get artist of the month based on highest sales
+
+export const getArtistOfTheMonth = async (req, res) => {
+  try {
+    // Find the artist with the highest sales
+    const artistOfTheMonth = await Artists.findOne().sort({ totalSales: -1 }).limit(1);
+    if (!artistOfTheMonth) {
+      return res.status(404).json({ message: 'No artists found' });
+    }
+    res.status(200).json({
+      message: 'Artist of the month fetched successfully',
+      artist: artistOfTheMonth,
+    });
+  } catch (error) {
+    console.error('Error fetching artist of the month:', error);
+    res.status(500).json({
+      message: 'Error fetching artist of the month',
+      error: error.message,
+    });
+  }
+};
+
+

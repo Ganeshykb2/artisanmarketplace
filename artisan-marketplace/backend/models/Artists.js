@@ -85,5 +85,4 @@ const ArtistsSchema = new mongoose.Schema({
   },
 
 });
-
 export default mongoose.models.Artists || mongoose.model('Artists', ArtistsSchema );

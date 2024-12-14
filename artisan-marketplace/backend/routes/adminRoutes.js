@@ -14,12 +14,9 @@ router.get('/unverified-artists', adminAuth, getAllUnverifiedArtistsWithOrders);
 router.get('/products', adminAuth, getAllProducts);
 router.get('/orders', adminAuth, getAllOrders);
 router.get('/events', adminAuth, getAllEvents);
-
+// Admin can delete an artist
 // Admin can verify artist based on number of orders
 router.put('/verify-all/', adminAuth, updateAllUnverifiedArtisans);
 router.put('/verify-artist/:id', adminAuth, updateParticularUnverifiedArtist);
-
-// Admin can delete an artist
 router.delete('/artists/:id', adminAuth, deleteArtist);
-
 export default router;

@@ -1,6 +1,29 @@
 import mongoose from 'mongoose';
 import { v4 as uuidv4 } from "uuid";
 
+const AddressSchema = new mongoose.Schema({
+  address: {
+    type: String,
+    required: true,
+  },
+  city: {
+    type: String,
+    required: true,
+  },
+  state: {
+    type: String,
+    required: true,
+  },
+  country: {
+    type: String,
+    required: true,
+  },
+  pincode: {
+    type: String,
+    required: true,
+  }
+});
+
 const CustomersSchema = new mongoose.Schema({
   id: {
     type: String,
@@ -42,6 +65,10 @@ const CustomersSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  secondaryAddresses: {
+    type: [AddressSchema], // Array 
+    default: [],          // empty array
+  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -56,5 +83,4 @@ const CustomersSchema = new mongoose.Schema({
     default: '',  // Optional field for profile picture
   }
 });
-
 export default mongoose.models.Customers || mongoose.model('Customers', CustomersSchema);

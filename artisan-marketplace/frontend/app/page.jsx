@@ -68,7 +68,7 @@ export default function Home() {
           </h1>
           <p className="text-xl mb-8">Discover and support the incredible artisans of Varanasi</p>
           <Button asChild>
-            <Link href="/products">
+            <Link href="/exploreproducts">
               Explore Products <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>

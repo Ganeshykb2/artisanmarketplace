@@ -301,6 +301,35 @@ export const getProductById = async (req, res) => {
     res.status(500).json({ message: 'Error fetching product', error: error.toString() });
   }
 };
+export const getCustomerAddressDetails = async (req, res) => {
+  try {
+    const customerId = req.user.id; // Assuming `req.user.id` contains the authenticated customer's custom UUID field
+
+    // Find the customer by their custom UUID (id)
+    const customer = await Customers.findOne({ id: customerId }, 'address pincode state country city'); // Only fetch the required fields
+
+    if (!customer) {
+      return res.status(404).json({ message: 'Customer not found' });
+    }
+
+    res.status(200).json({
+      message: 'Customer address details retrieved successfully',
+      addressDetails: {
+        address: customer.address,
+        city: customer.city,
+        state: customer.state,
+        pincode: customer.pincode,
+        country: customer.country || 'India', // Default to 'India' if not explicitly stored
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching customer address details:', error);
+    res.status(500).json({
+      message: 'Error fetching customer address details',
+      error: error.toString(),
+    });
+  }
+};
 
 export const makePayment = async (req, res) => {
   try {

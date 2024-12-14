@@ -152,3 +152,20 @@ export const getArtistProduct = async (req, res) => {
     res.status(500).json({ message: 'Error fetching products', error: error.message });
   }
 };
+export const getAllProducts = async (req, res) => {
+  try {
+    // Fetch all products from the database
+    const products = await Product.find({});
+    // Check if there are no products
+    if (products.length === 0) {
+      return res.status(404).json({ message: 'No products found' });
+    }
+
+    // Return the list of all products
+    res.status(200).json({ message: 'All products fetched successfully', products });
+  } catch (error) {
+    // Handle any errors
+    console.error('Error fetching all products:', error);
+    res.status(500).json({ message: 'Error fetching all products', error: error.message });
+  }
+};

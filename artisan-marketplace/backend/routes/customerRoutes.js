@@ -15,6 +15,7 @@ import {
   submitProductReview, // New method to submit product review
   getEvents, // New method to fetch all events
   makePayment,
+  getCustomerAddressDetails,
 } from '../controllers/customerController.js';
 import { checkAuth } from '../middlewares/authMiddleware.js';
 
@@ -38,7 +39,7 @@ router.post('/join-event/name/:eventName', checkAuth, joinEventByName); // Join 
 router.post('/products/:productId/reviews', checkAuth, submitProductReview); // Submit product review
 router.get('/artist/:artistId', checkAuth, getArtistProfile); // Get particular artist profile details, rate-limited
 router.post('/payment', checkAuth, makePayment); // New route for making a payment
-
-
+//NOT WORKING YET
+router.get('/addressFetch', checkAuth, getCustomerAddressDetails);
 
 export default router;

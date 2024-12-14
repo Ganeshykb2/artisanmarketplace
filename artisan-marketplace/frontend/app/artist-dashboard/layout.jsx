@@ -21,6 +21,7 @@ const ArtistDashboardLayout = ({ children }) => {
 
   const handleLogout = () => {
     // TODO: Implement logout logic
+    
     console.log('Logout clicked')
   }
 

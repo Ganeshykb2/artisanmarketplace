@@ -17,6 +17,7 @@ const ImagePreview = ({ image, onRemove, index }) => (
   </div>
 );
 
+
 export default function AddNewProduct() {
   // Initialize form handling with React Hook Form
   const { register, handleSubmit, formState: { errors }, setValue } = useForm();
@@ -67,6 +68,8 @@ export default function AddNewProduct() {
   const onSubmit = async (data) => {
     setIsLoading(true); // Set loading to true when submission starts
     setMessage({ type: '', content: '' }); // Clear any previous messages
+
+    // const result = await addProduct(data);
 
     const productData = {
       ...data,

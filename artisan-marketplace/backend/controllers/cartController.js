@@ -23,7 +23,6 @@ export const getCart = async (req,res) => {
 export const addItemToCart = async (req, res) => {
   const { productId, quantity = 1 } = req.body; // Default quantity is 1 if not provided
   const user = req.user;
-
   try {
     // Check if a cart already exists for the user
     let cart = req.userType === 'artist' ? await Cart.findOne({ artistId: user.id }) : await Cart.findOne({customerId: user.id });

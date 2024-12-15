@@ -75,7 +75,8 @@ export async function POST(req) {
     })
 
     const result = await response?.json();
-
+    
+  console.log(result);
     if(!response.ok){
       return new NextResponse(JSON.stringify({ success: false, message: "Error updating cart" }), {
         status: 404,

@@ -95,6 +95,7 @@ export default function SignupPage() {
                     <Label htmlFor="consumer-password">Password</Label>
                     <Input id="consumer-password" name="password" type="password" placeholder="Create a password" required />
                   </div>
+                  
                   {/* <div>
                     <Label htmlFor="consumer-dob">Date of Birth</Label>
                     <Input id="consumer-dob" name="DOB" type="date" required />
@@ -149,8 +150,37 @@ export default function SignupPage() {
                     <Input id="seller-password" name="password" type="password" placeholder="Create a password" required />
                   </div>
                   <div>
+                    <Label htmlFor="seller-profile-image">Profile Image</Label>
+                    <Input
+                      type="file"
+                      id="seller-profile-image"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="mt-1 block w-full text-sm text-gray-500
+                        file:mr-4 file:py-2 file:px-4
+                        file:rounded-full file:border-0
+                        file:text-sm file:font-semibold
+                        file:bg-violet-50 file:text-violet-700
+                        hover:file:bg-violet-100"
+                    />
+                    {profileImage && (
+                      <div className="mt-2">
+                        <ImagePreview image={profileImage} onRemove={removeImage} />
+                      </div>
+                    )}
+                  </div>
+                  <div>
                     <Label htmlFor="seller-business-name">Business Name</Label>
                     <Input id="seller-business-name" name="businessName" placeholder="Enter your business name" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="seller-specialization">Specialization</Label>
+                    <MultiSelect
+                      options={specializations}
+                      selected={selectedSpecializations}
+                      onChange={setSelectedSpecializations}
+                      placeholder="Select your specializations"
+                    />
                   </div>
                   {/* Don't use this for now.
                   <div>

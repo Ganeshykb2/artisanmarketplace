@@ -18,6 +18,10 @@ const EventsSchema = new mongoose.Schema({
     enum: ["conference", "workshop", "meetup", "seminar", "government"],
     required: true,
   },
+  images: {
+    type: [String],
+    required: true,
+  },
   dateOfEvent: {
     type: Date,
     required: true,
@@ -31,8 +35,7 @@ const EventsSchema = new mongoose.Schema({
     required: true,
   },
   artistId: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Artists',
+    type: String,
     required: true,
   },
   participants: {

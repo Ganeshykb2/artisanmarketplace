@@ -27,7 +27,13 @@ export default function ProductsPage({ initialProducts, error }) {
     if (!initialProducts && !error) {
       const fetchProducts = async () => {
         try {
-          const response = await fetch('http://localhost:5000/api/products/artistsproducts');
+          const response = await fetch('http://localhost:5000/api/products/artistsproducts',{
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            //   'Authorization': `Bearer ${localStorage.getItem('token')}`, // Include the JWT token
+            }
+          });
           if (!response.ok) {
             throw new Error('Failed to fetch products');
           }

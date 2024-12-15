@@ -169,3 +169,26 @@ export const getAllProducts = async (req, res) => {
     res.status(500).json({ message: 'Error fetching all products', error: error.message });
   }
 };
+
+export const getProductsByIds = async (req, res) => {
+  try {
+    // Extract the products array from the request body
+    const { products } = req.body;
+    
+    if (!products || !Array.isArray(products)) {
+      return res.status(400).json({ success: false, message: 'Invalid products array' });
+    }
+
+    // Extract product IDs from the products array
+    const productIds = products.map(product => product.productId);
+
+    // Fetch products from the database matching the IDs
+    const fetchedProducts = await Product.find({ productId: { $in: productIds } });
+
+    // Return the fetched products
+    return res.status(200).json({ success: true, products: fetchedProducts });
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    return res.status(500).json({ success: false, message: 'Error fetching products', error });
+  }
+};

@@ -1,6 +1,29 @@
 import mongoose from 'mongoose';
 import { v4 as uuidv4 } from "uuid";
 
+const AddressSchema = new mongoose.Schema({
+  address: {
+    type: String,
+    required: true,
+  },
+  city: {
+    type: String,
+    required: true,
+  },
+  state: {
+    type: String,
+    required: true,
+  },
+  country: {
+    type: String,
+    required: true,
+  },
+  pincode: {
+    type: String,
+    required: true,
+  }
+});
+
 const ArtistsSchema = new mongoose.Schema({
   id: {
     type: String,
@@ -56,6 +79,10 @@ const ArtistsSchema = new mongoose.Schema({
   pincode: {
     type: String,
     required: true,
+  },
+  secondaryAddresses: {
+    type: [AddressSchema], // Array 
+    default: [],          // empty array
   },
   rating: {
     type: Number,

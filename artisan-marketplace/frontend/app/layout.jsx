@@ -2,7 +2,7 @@
 
 import { Inter } from 'next/font/google';
 import Link from 'next/link';
-import { Palette, Menu, ChevronDown, Search, User, ShoppingCart, LogOut, LogIn, UserPlus, UserCircle } from 'lucide-react';
+import { Palette, Menu, ChevronDown, Search, User, LogOut, LogIn, UserPlus, UserCircle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import {ShoppingCartItem} from '@/components/ui/shoppingCartItem'
 import './globals.css';
 import { useEffect, useState } from 'react';
 import { UserProvider } from './UserProvider';
@@ -161,10 +162,7 @@ export default function RootLayout({ children }) {
                     </DropdownMenuItem>
                   </DropdownMenuContent>}
                 </DropdownMenu>
-                <Button variant="ghost" size="icon">
-                  <ShoppingCart className="h-5 w-5" />
-                  <span className="sr-only">Shopping cart</span>
-                </Button>
+                <ShoppingCartItem/>
               </div>
               <Sheet>
                 <SheetTrigger asChild>

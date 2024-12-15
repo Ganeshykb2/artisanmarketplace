@@ -21,6 +21,7 @@ export const checkAuth = async (req, res, next) => {
     }
 
     // Attach customer info to the request
+    req.userType = 'customer';
     req.user = customer;
     next();
   } catch (error) {

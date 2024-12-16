@@ -1,6 +1,7 @@
 // backend/controllers/productController.js
 import Product from '../models/Products.js';
 import Artist from '../models/Artists.js';
+import Artists from '../models/Artists.js';
 
 export const createProduct = async (req, res) => {
   try {
@@ -8,8 +9,8 @@ export const createProduct = async (req, res) => {
     const { name, description, price, quantity, images, category, status, discount } = req.body;
 
     // Get the artistId from the authenticated user (assuming it's attached to the request)
-    // const artistId = req.user.id
-    const artistId = "artistidhgmhdfvhjvn";
+    const artistId = req.user.id;
+    // const artistId = "artistidhgmhdfvhjvn";
 
     // Create a new product instance
     const newProduct = new Product({
@@ -104,15 +105,40 @@ export const deleteProduct = async (req, res) => {
     res.status(500).json({ message: 'Error deleting product', error });
   }
 };
+export const getFeaturedProducts = async (req, res) => {
+  try {
+    // Fetch the first 6 products with an average rating above 3
+    let featuredProducts = await Product.find({ averageRating: { $gte: 3 } })
+      .limit(6);
+
+    // If no products are found with a rating above 3, fetch the first 6 available products
+    if (featuredProducts.length === 0) {
+      console.log('No products with rating above 3, fetching first 6 available products');
+      featuredProducts = await Product.find({})
+        .limit(6);
+    }
+
+    if (featuredProducts.length === 0) {
+      return res.status(404).json({ message: 'No products found' });
+    }
+
+    res.status(200).json({ message: 'Featured products fetched successfully', products: featuredProducts });
+  } catch (error) {
+    console.error('Error fetching featured products:', error);
+    res.status(500).json({ message: 'Error fetching featured products', error: error.message });
+  }
+};
+
+
 
 export const getArtistProduct = async (req, res) => {
   try {
     // Get the artistId from the authenticated user (assuming it's attached to the request)
-    // const artistId = req.user.id;
-    const artistId = "artistidhgmhdfvhjvn"; // Placeholder artistId
+    const {artistId} = req.params;
+    // const artistId = "artistidhgmhdfvhjvn"; // Placeholder artistId
 
     // Fetch products for the specific artist from the database
-    const products = await Product.find({ artistId });
+    const products = await Product.find({artistId});
 
     if (products.length === 0) {
       return res.status(404).json({ message: 'No products found for this artist' });
@@ -124,5 +150,22 @@ export const getArtistProduct = async (req, res) => {
     // Handle any errors and return an error response
     console.error('Error fetching products:', error);
     res.status(500).json({ message: 'Error fetching products', error: error.message });
+  }
+};
+export const getAllProducts = async (req, res) => {
+  try {
+    // Fetch all products from the database
+    const products = await Product.find({});
+    // Check if there are no products
+    if (products.length === 0) {
+      return res.status(404).json({ message: 'No products found' });
+    }
+
+    // Return the list of all products
+    res.status(200).json({ message: 'All products fetched successfully', products });
+  } catch (error) {
+    // Handle any errors
+    console.error('Error fetching all products:', error);
+    res.status(500).json({ message: 'Error fetching all products', error: error.message });
   }
 };

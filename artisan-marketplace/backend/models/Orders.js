@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 const OrderItemSchema = new mongoose.Schema({
   productId: { 
-    type: mongoose.Schema.Types.ObjectId, 
+    type: String, 
     ref: 'Products', 
     required: true,
   },
@@ -38,7 +38,7 @@ const OrdersSchema = new mongoose.Schema({
     required: true,
   },
   customerId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: 'Customers',
     required: true,
   },
@@ -53,7 +53,7 @@ const OrdersSchema = new mongoose.Schema({
     default: 'pending',
   },
   paymentId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: 'Payments',
     required: true,
   },

@@ -7,7 +7,8 @@ import {
   deleteEvent,
   registerForEvent,
   getEventsByArtist,
-  getUserRegistrations
+  getUserRegistrations,
+  getUpcomingEvents
 } from '../controllers/eventController.js';
 import { checkAuth } from '../middlewares/authMiddleware.js'; // Assuming checkAuth middleware is correctly defined
 import artistAuth from '../middlewares/artistAuth.js'
@@ -31,5 +32,6 @@ router.delete('/:eventId', artistAuth, deleteEvent);  // Only the artisan who cr
 router.post('/register/:eventId', checkAuth, registerForEvent);  // Register for an event (both customers and artisans)
 router.get('/artist/:artistId', checkAuth, getEventsByArtist);  // Fetch all events hosted by a specific artist
 router.get('/registrations', checkAuth, getUserRegistrations);  // Fetch events user is registered for
+router.get('/upcoming', getUpcomingEvents);
 
 export default router;

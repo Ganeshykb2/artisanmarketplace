@@ -92,7 +92,7 @@ export default function LoginPage() {
                   </div>
                   <Button type="submit" className="w-full">Login as Seller</Button>
                   <div>
-                  {message&&<p className='text-red'>{message}</p>}
+                  {message&&<p className='text-red-500 text-center'>{message}</p>}
                   </div>
                 </div>
                 

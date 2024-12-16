@@ -2,6 +2,7 @@ import Event from '../models/Events.js';
 import Artist from '../models/Artists.js';
 import Customer from '../models/Customers.js';
 
+
 export const createEvent = async (req, res) => {
   try {
     const { name, eventType, dateOfEvent, location,images, description } = req.body;
@@ -63,7 +64,25 @@ export const getEventById = async (req, res) => {
     res.status(500).json({ message: 'Error fetching event details', error });
   }
 };
+export const getUpcomingEvents = async (req, res) => {
+  try {
+    const currentDate = new Date();
 
+    // Fetch events sorted by closest future dates
+    const upcomingEvents = await Event.find({ dateOfEvent: { $gte: currentDate } })
+      .sort({ dateOfEvent: 1 }) // Sort by ascending date
+      .limit(4) // Limit to 4 events
+      .select('dateOfEvent location description name'); // Select only necessary fields
+
+    if (!upcomingEvents.length) {
+      return res.status(404).json({ message: 'No upcoming events found' });
+    }
+
+    res.status(200).json({ message: 'Upcoming events fetched successfully', events: upcomingEvents });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching upcoming events', error });
+  }
+};
 export const updateEvent = async (req, res) => {
   const { eventId } = req.params;
   try {

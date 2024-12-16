@@ -56,12 +56,6 @@ const ArtistDashboardLayout = ({ children }) => {
       icon: <StarOutlined />,
       label: <Link href="/artist-dashboard/reviews">Reviews</Link>,
     },
-    {
-      key: 'logout',
-      icon: <LogoutOutlined />,
-      label: 'Logout',
-      onClick: handleLogout,
-    }
   ]
 
   return (

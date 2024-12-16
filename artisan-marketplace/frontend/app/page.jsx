@@ -6,27 +6,15 @@ import { ArrowRight, ShoppingCart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useUser } from './UserProvider'
+import Products from '@/components/ui/Products'
 
 export default function Home() {
   const { userName } = useUser();
-  const [featuredProducts, setFeaturedProducts] = useState([]);
   const [artistOfTheMonth, setArtistOfTheMonth] = useState(null);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
 
   useEffect(() => {
-    // Fetch Featured Products
-    const fetchFeaturedProducts = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/api/products/featured-products');
-        const data = await response.json();
-        if (data.products) {
-          setFeaturedProducts(data.products);
-        }
-      } catch (error) {
-        console.error('Error fetching featured products:', error);
-      }
-    };
-
+    
     // Fetch Artist of the Month
     const fetchArtistOfTheMonth = async () => {
       try {
@@ -52,8 +40,6 @@ export default function Home() {
         console.error('Error fetching upcoming events:', error);
       }
     };
-
-    fetchFeaturedProducts();
     fetchArtistOfTheMonth();
     fetchUpcomingEvents();
   }, []);
@@ -77,37 +63,7 @@ export default function Home() {
         {/* Featured Products Section */}
         <section>
           <h2 className="text-3xl font-semibold mb-6">Featured Products</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {featuredProducts.length > 0 ? (
-              featuredProducts.map((product) => (
-                <Card key={product.productId}>
-                  <Image
-                    src={product.images[0]}
-                    alt={`Featured product ${product.name}`}
-                    width={300}
-                    height={200}
-                    className="w-full object-cover"
-                  />
-                  <CardHeader>
-                    <CardTitle>{product.name}</CardTitle>
-                    <CardDescription>By Artisan {product.artistId}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-2xl font-bold mb-4">₹{product.price}</p>
-                    <div className="flex space-x-2">
-                      <Button className="flex-1">Buy Now</Button>
-                      <Button variant="outline" className="flex-1">
-                        <ShoppingCart className="mr-2 h-4 w-4" />
-                        Add to Cart
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
-            ) : (
-              <p>No featured products available</p>
-            )}
-          </div>
+            <Products productType={'Featured Products'}></Products>
         </section>
 
         {/* Artist of the Month Section */}

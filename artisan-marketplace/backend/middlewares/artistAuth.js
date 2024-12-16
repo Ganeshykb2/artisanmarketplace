@@ -16,7 +16,7 @@ const artistAuth = async (req, res, next) => {
     if (!artist) {
       return res.status(404).json({ message: 'Artist not found' });
     }
-
+    req.userType = 'artist';
     req.user = artist; // Attach the artist details to the request
     next(); // Proceed to the next middleware or route handler
   } catch (error) {

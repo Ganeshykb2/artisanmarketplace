@@ -38,13 +38,18 @@ function ProductCard({product}) {
 
   return (
     <Card>
-        <Image
-        src={product.images[0]}
-        alt={`Featured product ${product.name}`}
-        width={300}
-        height={200}
-        className="w-full object-cover"
-        />
+        <div className="w-full h-60 overflow-hidden">
+                <Image
+                    src={product.images[0]}
+                    alt={`Featured product ${product.name}`}
+                    width={300}
+                    height={300}
+                    className="w-full h-full object-cover top"
+                    style={{
+                        objectPosition: 'top' // Focus on the upper part of the image
+                    }}
+                />
+        </div>
         <CardHeader>
         <CardTitle>{product.name}</CardTitle>
         <CardDescription>By Artisan {product.artistId}</CardDescription>

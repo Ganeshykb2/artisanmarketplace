@@ -4,11 +4,8 @@ import { NextResponse } from "next/server";
 export async function GET(){
     try{
         const cookieStore = await cookies();
-
         const artistId = cookieStore?.get('id');
-
         const response = await fetch(`http://localhost:5000/api/products/artistsproducts/${artistId?.value}`);
-
         const prod = await response?.json();
 
         if(response.ok){

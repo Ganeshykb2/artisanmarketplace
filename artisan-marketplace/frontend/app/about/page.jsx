@@ -1,7 +1,13 @@
-import Image from 'next/image'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import Image from 'next/image';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function AboutUs() {
+  const teamMembers = [
+    { name: "Shreesha", role: "Co-Founder", image: "/shreesha.png" },
+    { name: "Rahula", role: "Marketing Head", image: "/rahula.png" },
+    { name: "Modi", role: "Design Lead", image: "/modi.png" },
+  ];
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold mb-8">About Artisan Marketplace</h1>
@@ -14,11 +20,14 @@ export default function AboutUs() {
           <p className="text-lg mb-4">
             Our mission is to preserve and celebrate the rich cultural heritage of Varanasi while empowering artisans to thrive in the modern marketplace. By connecting artisans directly with customers, we ensure fair compensation and recognition for their exceptional skills.
           </p>
+          <p className="text-lg mb-4">
+            Through our platform, we aim to bridge the gap between traditional artisans and modern buyers, creating opportunities for sustainable livelihoods. By leveraging technology, we make their exquisite crafts accessible to people worldwide.
+          </p>
           <p className="text-lg">
             Join us in our journey to bring the beauty of Varanasi's handicrafts to the world, one artisan at a time.
           </p>
         </div>
-        <Image src="/placeholder.svg?height=400&width=600" alt="Artisan at work" width={600} height={400} className="w-full rounded-lg shadow-md" />
+        <Image src="/artisan-at-work.jpg" alt="Artisan at work" width={600} height={400} className="w-full rounded-lg shadow-md" />
       </div>
       
       <h2 className="text-3xl font-semibold mb-6">Our Impact</h2>
@@ -34,11 +43,11 @@ export default function AboutUs() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>₹10M+</CardTitle>
+            <CardTitle>₹10,000+</CardTitle>
             <CardDescription>Revenue Generated</CardDescription>
           </CardHeader>
           <CardContent>
-            Our platform has facilitated over ₹10 million in sales, directly benefiting local artisans.
+            Our platform has facilitated over ₹10,000 in sales, directly benefiting local artisans.
           </CardContent>
         </Card>
         <Card>
@@ -54,19 +63,30 @@ export default function AboutUs() {
       
       <h2 className="text-3xl font-semibold mb-6">Our Team</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {[1, 2, 3].map((i) => (
-          <Card key={i}>
-            <Image src={`/placeholder.svg?height=200&width=200`} alt={`Team Member ${i}`} width={200} height={200} className="w-full object-cover rounded-t-lg" />
+        {teamMembers.map((member, index) => (
+          <Card key={index} className="flex flex-col items-center">
+            <div className="w-full h-64 relative">
+              <Image 
+                src={member.image} 
+                alt={`Image of ${member.name}`} 
+                fill 
+                className="object-cover rounded-t-lg"
+                style={{
+                  objectFit: 'cover',
+                  objectPosition: 'top', // Focus on the upper part of the image
+                }}
+              />
+            </div>
             <CardHeader>
-              <CardTitle>Team Member Name</CardTitle>
-              <CardDescription>Position</CardDescription>
+              <CardTitle>{member.name}</CardTitle>
+              <CardDescription>{member.role}</CardDescription>
             </CardHeader>
             <CardContent>
-              <p>Brief description of the team member's role and passion for supporting artisans.</p>
+              <p>Brief description of {member.name}'s role and passion for supporting artisans.</p>
             </CardContent>
           </Card>
         ))}
       </div>
     </div>
-  )
+  );
 }

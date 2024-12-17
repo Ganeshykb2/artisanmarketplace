@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllArtists, getAllUnverifiedArtistsWithOrders, getAllProducts, getAllOrders, getAllEvents, updateAllUnverifiedArtisans, updateParticularUnverifiedArtist, deleteArtist, adminLogin ,adminRegister} from '../controllers/adminController.js';
+import { getAllArtists, getAllUnverifiedArtistsWithOrders, getAllProducts, getAllOrders, getAllEvents, updateAllUnverifiedArtisans, updateParticularUnverifiedArtist, deleteArtist, adminLogin ,adminRegister,getArtistsWithProducts } from '../controllers/adminController.js';
 import adminAuth from '../middlewares/adminAuth.js';
 
 const router = express.Router();
@@ -14,6 +14,7 @@ router.get('/unverified-artists', adminAuth, getAllUnverifiedArtistsWithOrders);
 router.get('/products', adminAuth, getAllProducts);
 router.get('/orders', adminAuth, getAllOrders);
 router.get('/events', adminAuth, getAllEvents);
+router.get('/artistproducts', adminAuth, getArtistsWithProducts);
 // Admin can delete an artist
 // Admin can verify artist based on number of orders
 router.put('/verify-all/', adminAuth, updateAllUnverifiedArtisans);

@@ -67,10 +67,10 @@ export const updateAllUnverifiedArtisans = async (req, res) => {
       throw new Error("unverifiedArtistsWithOrders did not return an array.");
     }
 
-    const artisanIds = unverifiedArtists.map(artisan => artisan._id);
+    const artisanIds = unverifiedArtists.map(artisan => artisan.id);
 
     const result = await Artists.updateMany(
-      { _id: { $in: artisanIds } },
+      { id: { $in: artisanIds } },
       { $set: { verified: true } }
     );
 
@@ -87,7 +87,7 @@ export const updateParticularUnverifiedArtist  = async (req, res) => {
     // Get all Unverified Artists with Order 5 or more.
     const artistId = req.params.id;
     const result = await Artists.updateOne(
-      { _id: artistId, verified: false }, // Match the artisan by ID and ensure it's currently unverified
+      { id: artistId, verified: false }, // Match the artisan by ID and ensure it's currently unverified
       { $set: { verified: true } } // Update the `verified` field to true
     );
 
@@ -177,6 +177,62 @@ export const adminLogin = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+export const getArtistsWithProducts = async (req, res) => {
+  try {
+    // Fetch only specific artist fields
+    const artists = await Artists.find({}, 'id name verified').lean();
+
+    // Check if artists is null or undefined
+    if (!artists || artists.length === 0) {
+      return res.status(404).json({ message: "No artists found" });
+    }
+
+    // Fetch products for each artist and attach them
+    const artistsWithProducts = await Promise.all(
+      artists.map(async (artist) => {
+        // Ensure artist.id exists before querying
+        if (!artist.id) {
+          console.warn('Artist missing ID:', artist);
+          return { ...artist, products: [] };
+        }
+
+        try {
+          const products = await Products.find({ 
+            artistId: artist.id 
+          }, 'productId name price quantity description category status').lean(); // Fetch comprehensive product details
+
+          return { 
+            ...artist, 
+            products: products || [] 
+          };
+        } catch (productFetchError) {
+          console.error(`Error fetching products for artist ${artist.id}:`, productFetchError);
+          return { 
+            ...artist, 
+            products: [],
+            productFetchError: productFetchError.message 
+          };
+        }
+      })
+    );
+
+    // Ensure we always return a valid response
+    res.status(200).json({
+      message: "Artists and products fetched successfully",
+      data: artistsWithProducts,
+      total: artistsWithProducts.length
+    });
+
+  } catch (error) {
+    console.error("Error in getArtistsWithProducts:", error);
+    res.status(500).json({
+      message: "Error fetching artists and products",
+      error: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 };
 

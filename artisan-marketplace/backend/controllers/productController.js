@@ -1,7 +1,6 @@
 // backend/controllers/productController.js
 import Product from '../models/Products.js';
-import Artist from '../models/Artists.js';
-import Artists from '../models/Artists.js';
+
 
 export const createProduct = async (req, res) => {
   try {
@@ -134,7 +133,6 @@ export const getArtistProduct = async (req, res) => {
   try {
     // Get the artistId from the authenticated user (assuming it's attached to the request)
     const {artistId} = req.params;
-    // const artistId = "artistidhgmhdfvhjvn"; // Placeholder artistId
 
     // Fetch products for the specific artist from the database
     const products = await Product.find({artistId});

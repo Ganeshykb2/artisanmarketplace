@@ -20,12 +20,12 @@ const AdminLayout = ({ children }) => {
     {
       key: 'artists',
       icon: <UserOutlined />,
-      label: <Link href="/admin-dashboard/artists">Artists</Link>,
+      label: <Link href="/admin-dashboard/artists">Artist & Products</Link>,
     },
     {
       key: 'products',
       icon: <ShoppingOutlined />,
-      label: <Link href="/admin-dashboard/products">Products</Link>,
+      label: <Link href="/admin-dashboard/allartists">Artists</Link>,
     },
     {
       key: 'orders',

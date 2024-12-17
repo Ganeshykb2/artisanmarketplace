@@ -2,6 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea';
 
 // Component for displaying image previews
 const ImagePreview = ({ image, onRemove, index }) => (
@@ -93,6 +96,7 @@ export default function AddNewProduct() {
         setMessage({type: 'error', content: 'Failed to add product' || result?.message});
         throw new Error("Failed to add product");
       }
+      window.location.href = '/artist-dashboard/products';
       console.log('Product added successfully:', result);
       setMessage({ type: 'success', content: 'Product added successfully!' || result?.message});
 
@@ -129,10 +133,10 @@ export default function AddNewProduct() {
 
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        {/* Name input field */}
+        {/* Name Input field */}
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
-          <input
+          <Label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</Label>
+          <Input
             type="text"
             id="name"
             {...register("name", { required: "Name is required" })}
@@ -141,22 +145,22 @@ export default function AddNewProduct() {
           {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
         </div>
 
-        {/* Description input field */}
+        {/* Description Input field */}
         <div>
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
-          <textarea
+          <Label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</Label>
+          <Textarea
             id="description"
             {...register("description", { required: "Description is required" })}
             rows="3"
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-          ></textarea>
+          ></Textarea>
           {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>}
         </div>
 
-        {/* Price input field */}
+        {/* Price Input field */}
         <div>
-          <label htmlFor="price" className="block text-sm font-medium text-gray-700">Price</label>
-          <input
+          <Label htmlFor="price" className="block text-sm font-medium text-gray-700">Price</Label>
+          <Input
             type="number"
             id="price"
             step="0.01"
@@ -168,10 +172,10 @@ export default function AddNewProduct() {
 
         {/* Image upload field */}
         <div>
-          <label htmlFor="images" className="block text-sm font-medium text-gray-700">
+          <Label htmlFor="images" className="block text-sm font-medium text-gray-700">
             Images (Upload up to 5, at least 1 required)
-          </label>
-          <input
+          </Label>
+          <Input
             type="file"
             id="images"
             accept="image/*"
@@ -193,10 +197,10 @@ export default function AddNewProduct() {
           {images.length > 0 && <p className="mt-1 text-sm text-gray-600">{images.length} image(s) selected</p>}
         </div>
 
-        {/* Quantity input field */}
+        {/* Quantity Input field */}
         <div>
-          <label htmlFor="quantity" className="block text-sm font-medium text-gray-700">Quantity</label>
-          <input
+          <Label htmlFor="quantity" className="block text-sm font-medium text-gray-700">Quantity</Label>
+          <Input
             type="number"
             id="quantity"
             {...register("quantity", { required: "Quantity is required", min: 0 })}
@@ -205,10 +209,10 @@ export default function AddNewProduct() {
           {errors.quantity && <p className="mt-1 text-sm text-red-600">{errors.quantity.message}</p>}
         </div>
 
-        {/* Category input field */}
+        {/* Category Input field */}
         <div>
-          <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</label>
-          <input
+          <Label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</Label>
+          <Input
             type="text"
             id="category"
             {...register("category", { required: "Category is required" })}
@@ -219,7 +223,7 @@ export default function AddNewProduct() {
 
         {/* Status select field */}
         <div>
-          <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
+          <Label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</Label>
           <select
             id="status"
             {...register("status")}
@@ -231,10 +235,10 @@ export default function AddNewProduct() {
           </select>
         </div>
 
-        {/* Discount input field */}
+        {/* Discount Input field */}
         <div>
-          <label htmlFor="discount" className="block text-sm font-medium text-gray-700">Discount</label>
-          <input
+          <Label htmlFor="discount" className="block text-sm font-medium text-gray-700">Discount</Label>
+          <Input
             type="number"
             id="discount"
             step="0.01"

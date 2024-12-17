@@ -1,18 +1,18 @@
-'use client'
+'use client';
 
-import React, { useState } from 'react'
-import { Button } from "@/components/ui/button"
+import React from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import ShoppingCartList from './shoppingCartList'
+} from '@/components/ui/dialog';
+import ShoppingCartList from './shoppingCartList';
 
-export default function ShoppingCartModal({ isOpen, onClose, items, setCart }) {
-  const [totalItem, setTotalItem] = useState("");
-  const total = items?.reduce((sum, item) => sum + item.productPrice * item.quantity, 0)
+export default function ShoppingCartModal({ isOpen, onClose, items, updateCart }) {
+  const total = items?.reduce((sum, item) => sum + item.productPrice * item.quantity, 0);
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
@@ -25,7 +25,11 @@ export default function ShoppingCartModal({ isOpen, onClose, items, setCart }) {
           ) : (
             <ul className="divide-y divide-gray-200">
               {items?.map((item) => (
-                <ShoppingCartList key={item?.productId} item={item} setCart={setCart}/>
+                <ShoppingCartList
+                  key={item.productId}
+                  item={item}
+                  updateCart={updateCart}
+                />
               ))}
             </ul>
           )}
@@ -41,6 +45,5 @@ export default function ShoppingCartModal({ isOpen, onClose, items, setCart }) {
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
-

@@ -1,39 +1,54 @@
-'use client'
+'use client';
 
-import React, { useEffect, useState } from 'react'
-import { ShoppingCart } from 'lucide-react'
-import { Button } from "@/components/ui/button"
-import ShoppingCartModal from './shoppingCartModal'
+import React, { useEffect, useState } from 'react';
+import { ShoppingCart } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import ShoppingCartModal from './shoppingCartModal';
 
 export function ShoppingCartItem() {
-  const [isCartOpen, setIsCartOpen] = useState(false)
-  const [cartItems, setCartItems] = useState([])
-  const [cart,setCart] = useState(null);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
 
-  const itemCount = cartItems?.reduce((sum, item) => sum + item.quantity, 0)
+  // Calculate total item count in the cart
+  const itemCount = cartItems?.reduce((sum, item) => sum + item.quantity, 0);
 
-  const getCart = async ()=>{
-    try{
+  // Fetch the cart items from the API
+  const getCart = async () => {
+    try {
       const response = await fetch('/api/cart');
       const cart = await response?.json();
-      if(response.ok){
-        const cartItems = cart?.cart?.products
-        setCartItems(cartItems);
+      if (response.ok) {
+        setCartItems(cart?.cart?.products || []);
       }
-    } catch(err){
-      console.log(err);
+    } catch (err) {
+      console.error('Failed to fetch cart:', err);
     }
-  }
+  };
 
-  useEffect(()=>{
+  // Update cart items based on changes from child components
+  const updateCart = (productId, newQuantity) => {
+    setCartItems((prevItems) =>
+      prevItems
+        .map((item) =>
+          item.productId === productId ? { ...item, quantity: newQuantity } : item
+        )
+        .filter((item) => item.quantity > 0) // Remove items with zero quantity
+    );
+  };
+
+  // Load cart items on component mount
+  useEffect(() => {
     getCart();
-  },[cart]);
+  }, []);
 
+  // Open the cart modal and refresh cart data
   const openCart = async () => {
+    await getCart();
     setIsCartOpen(true);
-    getCart();
-  }
-  const closeCart = () => setIsCartOpen(false)
+  };
+
+  // Close the cart modal
+  const closeCart = () => setIsCartOpen(false);
 
   return (
     <>
@@ -42,7 +57,8 @@ export function ShoppingCartItem() {
           <div className="flex items-center">
             <Button
               onClick={openCart}
-              variant="ghost" size="icon"
+              variant="ghost"
+              size="icon"
               className="relative"
             >
               <ShoppingCart className="h-5 w-5" />
@@ -55,8 +71,12 @@ export function ShoppingCartItem() {
           </div>
         </div>
       </div>
-      <ShoppingCartModal isOpen={isCartOpen} onClose={closeCart} items={cartItems} setCart={setCart} />
+      <ShoppingCartModal
+        isOpen={isCartOpen}
+        onClose={closeCart}
+        items={cartItems}
+        updateCart={updateCart} // Pass the updateCart function to the modal
+      />
     </>
-  )
+  );
 }
-

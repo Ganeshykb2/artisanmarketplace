@@ -59,9 +59,12 @@ function Products({productType}) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {products.length > 0 ? (
-              products.map((product) => (
-                <ProductCard key={product.productId} product={product}/>
-              ))
+              products.map((product) => {
+                return(
+                  <ProductCard key={product.productId} product={product}/>
+                );
+              }  
+              )
             ) : (
               <p>No featured products available</p>
             )}

@@ -14,18 +14,10 @@ router.post('/login', loginArtist);
 // Get all artists (public route, no auth required)
 router.get('/', getAllArtists);
 
-router.put('/:id', artistAuth, async (req, res) => {
-  const artistId = req.params.id;
-  // Ensure the logged-in artist can only update their own details
-  if (req.user.id !== artistId) {
-    return res.status(403).json({ message: 'You can only update your own details.' });
-  }
-  updateArtist(req, res);  // Proceed with the update
-});
+router.put('/update', artistAuth, updateArtist );
 
 //to get details of the artist
 router.get('/getartistdetails',artistAuth,getArtistsDetails)
-
 
 // Delete artist account (only accessible by the artist after login)
 router.delete('/:id', artistAuth, async (req, res) => {

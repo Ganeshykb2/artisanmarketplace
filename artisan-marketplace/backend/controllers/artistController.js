@@ -140,7 +140,7 @@ export const loginArtist = async (req, res) => {
 
     // Generate a JWT token for the artist
     const token = jwt.sign(
-      { artistId: artist.id, role: artist.role || 'artist' },  // Include the artist's role in the token
+      { artistId: artist.id, role: artist.role || 'artist' },  // Include the admin's role in the token
       process.env.JWT_SECRET,  // Ensure you have JWT_SECRET in your .env file
       { expiresIn: '1d' }  // Token expiry set to 1 day (adjust as needed)
     );

@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -11,6 +11,8 @@ import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
 import { toast } from '@/hooks/use-toast'
 import { MultiSelect } from '@/components/ui/multi-select'
+import { useForm } from 'react-hook-form'
+
 
 const specializations = [
   { label: 'Painting', value: 'painting' },
@@ -26,24 +28,51 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [selectedSpecializations, setSelectedSpecializations] = useState([])
   const router = useRouter()
+  const { register, handleSubmit, formState: { errors }, setValue } = useForm();
+  const [image, setImage] = useState(null); 
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  // Function to convert file to base64
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  // Handle image file selection
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0]; // Get the first file
+    if (file) {
+      const base64 = await convertToBase64(file);
+      setImage(base64); // Set the single image state
+    }
+  };
+
+  // Remove the selected image
+  const removeImage = () => {
+    setImage(null); // Reset the image state to null
+  };
+
+  // Update form value when the image changes
+  useEffect(() => {
+    setValue('image', image); // Send the base64 image to the form
+  }, [image, setValue]);
+
+  const onSubmit = async (data) => {
     setIsLoading(true)
-
-    const formData = new FormData(e.target)
-    const userData = Object.fromEntries(formData.entries())
-    userData.userType = activeTab
+    data.userType = activeTab;
     if (activeTab === 'artists') {
-      //userData.specialization = selectedSpecializations
+      data.specialization = selectedSpecializations;
     }
 
     try {
-      console.log(userData);
+      console.log(data);
       const response = await fetch(`http://localhost:5000/api/${activeTab}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData),
+        body: JSON.stringify(data),
       })
 
       if (response.ok) {
@@ -81,51 +110,39 @@ export default function SignupPage() {
               <TabsTrigger value="artists">Artist</TabsTrigger>
             </TabsList>
             <TabsContent value="customers">
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="space-y-4">
                   <div>
                     <Label htmlFor="consumer-name">Full Name</Label>
-                    <Input id="consumer-name" name="name" placeholder="Enter your full name" required />
+                    <Input id="consumer-name" name="name" {...register('name', { required: true })} placeholder="Enter your full name" />
                   </div>
                   <div>
                     <Label htmlFor="consumer-email">Email</Label>
-                    <Input id="consumer-email" name="email" type="email" placeholder="Enter your email" required />
+                    <Input id="consumer-email" name="email" type="email" {...register('email', { required: true })} placeholder="Enter your email" />
                   </div>
                   <div>
                     <Label htmlFor="consumer-password">Password</Label>
-                    <Input id="consumer-password" name="password" type="password" placeholder="Create a password" required />
+                    <Input id="consumer-password" name="password" type="password" {...register('password', { required: true })} placeholder="Create a password" />
                   </div>
-                  {/* <div>
-                    <Label htmlFor="consumer-dob">Date of Birth</Label>
-                    <Input id="consumer-dob" name="DOB" type="date" required />
-                  </div> */}
-                  {/* <div>
-                    <Label htmlFor="consumer-about">About Yourself</Label>
-                    <Textarea id="consumer-about" name="AboutHimself" placeholder="Tell us about yourself" />
-                  </div> */}
                   <div>
                     <Label htmlFor="consumer-contact">Contact Number</Label>
-                    <Input id="consumer-contact" name="phoneNumber" placeholder="Enter your contact number" required />
+                    <Input id="consumer-contact" name="phoneNumber" {...register('phoneNumber', { required: true })} placeholder="Enter your contact number" />
                   </div>
-                  {/* <div className="flex items-center space-x-2">
-                    <Checkbox id="consumer-verify" name="contact.verify" />
-                    <Label htmlFor="consumer-verify">Verify contact number</Label>
-                  </div> */}
                   <div>
                     <Label htmlFor="seller-address">Address</Label>
-                    <Input id="seller-address" name="address" placeholder="Enter your address" required />
+                    <Input id="seller-address" name="address" {...register('address', { required: true })} placeholder="Enter your address" />
                   </div>
                   <div>
                     <Label htmlFor="seller-city">City</Label>
-                    <Input id="seller-city" name="city" placeholder="Enter your city" required />
+                    <Input id="seller-city" name="city" {...register('city', { required: true })} placeholder="Enter your city" />
                   </div>
                   <div>
                     <Label htmlFor="seller-state">State</Label>
-                    <Input id="seller-state" name="state" placeholder="Enter your state" required />
+                    <Input id="seller-state" name="state" {...register('state', { required: true })} placeholder="Enter your state" />
                   </div>
                   <div>
                     <Label htmlFor="seller-pincode">Pincode</Label>
-                    <Input id="seller-pincode" name="pincode" placeholder="Enter your pincode" required />
+                    <Input id="seller-pincode" name="pincode" {...register('pincode', { required: true })} placeholder="Enter your pincode" />
                   </div>
                   <Button type="submit" className="w-full" disabled={isLoading}>
                     {isLoading ? 'Signing Up...' : 'Sign Up as Consumer'}
@@ -134,25 +151,53 @@ export default function SignupPage() {
               </form>
             </TabsContent>
             <TabsContent value="artists">
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="space-y-4">
                   <div>
                     <Label htmlFor="seller-name">Full Name</Label>
-                    <Input id="seller-name" name="name" placeholder="Enter your full name" required />
+                    <Input id="seller-name" name="name" {...register('name', { required: true })} placeholder="Enter your full name" />
                   </div>
                   <div>
                     <Label htmlFor="seller-email">Email</Label>
-                    <Input id="seller-email" name="email" type="email" placeholder="Enter your email" required />
+                    <Input id="seller-email" name="email" type="email" {...register('email', { required: true })} placeholder="Enter your email" />
                   </div>
                   <div>
                     <Label htmlFor="seller-password">Password</Label>
-                    <Input id="seller-password" name="password" type="password" placeholder="Create a password" required />
+                    <Input id="seller-password" name="password" type="password" {...register('password', { required: true })} placeholder="Create a password" />
+                  </div>
+                  <div>
+                    <Label htmlFor="seller-profile-image">Profile Image</Label>
+                    <Input
+                      type="file"
+                      id="seller-profile-image"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="mt-1 block w-full text-sm text-gray-500
+                          file:mr-4 file:py-2 file:px-4
+                          file:rounded-full file:border-0
+                          file:text-sm file:font-semibold
+                          file:bg-violet-50 file:text-violet-700
+                          hover:file:bg-violet-100"
+                    />
+                    {image && (
+                      <div className="mt-2 relative mx-auto">
+                        <div className="w-32 h-32 rounded-full overflow-hidden mx-auto relative">
+                          <img src={image} alt="Profile Preview" className="w-full h-full object-cover" />
+                        </div>
+                        <button 
+                            type="button"
+                            onClick={removeImage} 
+                            className="absolute top-0 right-0 bg-red-600 text-white rounded-full p-2 text-sm"
+                          >
+                            X
+                          </button>
+                      </div>
+                    )}
                   </div>
                   <div>
                     <Label htmlFor="seller-business-name">Business Name</Label>
-                    <Input id="seller-business-name" name="businessName" placeholder="Enter your business name" required />
+                    <Input id="seller-business-name" name="businessName" {...register('businessName', { required: true })} placeholder="Enter your business name" />
                   </div>
-                  {/* Don't use this for now.
                   <div>
                     <Label htmlFor="seller-specialization">Specialization</Label>
                     <MultiSelect
@@ -161,42 +206,38 @@ export default function SignupPage() {
                       onChange={setSelectedSpecializations}
                       placeholder="Select your specializations"
                     />
-                  </div> */}
+                  </div>
                   <div>
                     <Label htmlFor="seller-dob">Date of Birth</Label>
-                    <Input id="seller-dob" name="DOB" type="date" required />
+                    <Input id="seller-dob" name="DOB" type="date" {...register('DOB', { required: true })} />
                   </div>
                   <div>
                     <Label htmlFor="seller-about">About Yourself</Label>
-                    <Textarea id="seller-about" name="AboutHimself" placeholder="Tell us about yourself and your business" />
+                    <Textarea id="seller-about" name="AboutHimself" {...register('AboutHimself')} placeholder="Tell us about yourself and your business" />
                   </div>
                   <div>
                     <Label htmlFor="seller-contact">Contact Number</Label>
-                    <Input id="seller-contact" name="phoneNumber" placeholder="Enter your contact number" required />
+                    <Input id="seller-contact" name="phoneNumber" {...register('phoneNumber', { required: true })} placeholder="Enter your contact number" />
                   </div>
-                  {/* <div className="flex items-center space-x-2">
-                    <Checkbox id="seller-verify" name="contact.verify" />
-                    <Label htmlFor="seller-verify">Verify contact number</Label>
-                  </div> */}
                   <div>
                     <Label htmlFor="seller-address">Address</Label>
-                    <Input id="seller-address" name="address" placeholder="Enter your address" required />
+                    <Input id="seller-address" name="address" {...register('address', { required: true })} placeholder="Enter your address" />
                   </div>
                   <div>
                     <Label htmlFor="seller-city">City</Label>
-                    <Input id="seller-city" name="city" placeholder="Enter your city" required />
+                    <Input id="seller-city" name="city" {...register('city', { required: true })} placeholder="Enter your city" />
                   </div>
                   <div>
                     <Label htmlFor="seller-state">State</Label>
-                    <Input id="seller-state" name="state" placeholder="Enter your state" required />
+                    <Input id="seller-state" name="state" {...register('state', { required: true })} placeholder="Enter your state" />
                   </div>
                   <div>
                     <Label htmlFor="seller-pincode">Pincode</Label>
-                    <Input id="seller-pincode" name="pincode" placeholder="Enter your pincode" required />
+                    <Input id="seller-pincode" name="pincode" {...register('pincode', { required: true })} placeholder="Enter your pincode" />
                   </div>
                   <div>
                     <Label htmlFor="seller-aadhar">Aadhar Number</Label>
-                    <Input id="seller-aadhar" name="aadhar" placeholder="Enter your Aadhar number" required />
+                    <Input id="seller-aadhar" name="aadhar" {...register('aadhar', { required: true })} placeholder="Enter your Aadhar number" />
                   </div>
                   <Button type="submit" className="w-full" disabled={isLoading}>
                     {isLoading ? 'Signing Up...' : 'Sign Up as Seller'}

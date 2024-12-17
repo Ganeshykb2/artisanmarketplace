@@ -18,6 +18,10 @@ const EventsSchema = new mongoose.Schema({
     enum: ["conference", "workshop", "meetup", "seminar", "government"],
     required: true,
   },
+  images: {
+    type: [String],
+    required: true,
+  },
   dateOfEvent: {
     type: Date,
     required: true,
@@ -31,25 +35,26 @@ const EventsSchema = new mongoose.Schema({
     required: true,
   },
   artistId: { 
-    type: String, 
-    ref: 'Artists',
+    type: String,
     required: true,
   },
   participants: {
-    type: [
-      {
-        participantId: { 
-          type: mongoose.Schema.Types.ObjectId, 
-          required: true, 
-          refPath: 'participants.type' // Dynamic reference to either 'Artists' or 'Users'
-        },
-        type: { 
-          type: String, 
-          enum: ["Artists", "Users"], 
-          required: true 
-        },
-      }
-    ],
+    type: [{
+      participantId: { 
+        type: String, 
+        required: true, 
+        refPath: 'participants.type' // Dynamic reference to either 'Artists' or 'Users'
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+      type: { 
+        type: String, 
+        enum: ["Artists", "Users"], 
+        required: true 
+      },
+    }],
     default: [],
   },
   createdAt: {

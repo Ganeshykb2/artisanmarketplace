@@ -10,7 +10,6 @@ export const createProduct = async (req, res) => {
 
     // Get the artistId from the authenticated user (assuming it's attached to the request)
     const artistId = req.user.id;
-    // const artistId = "artistidhgmhdfvhjvn";
 
     // Create a new product instance
     const newProduct = new Product({

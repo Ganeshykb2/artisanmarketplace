@@ -1,5 +1,6 @@
-import React from 'react'
-import { X } from 'lucide-react'
+'use client'
+
+import React, { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -7,10 +8,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import ShoppingCartList from './shoppingCartList'
 
-export default function ShoppingCartModal({ isOpen, onClose, items }) {
+export default function ShoppingCartModal({ isOpen, onClose, items, setCart }) {
+  const [totalItem, setTotalItem] = useState("");
   const total = items?.reduce((sum, item) => sum + item.productPrice * item.quantity, 0)
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
@@ -23,13 +25,7 @@ export default function ShoppingCartModal({ isOpen, onClose, items }) {
           ) : (
             <ul className="divide-y divide-gray-200">
               {items?.map((item) => (
-                <li key={item?.productId} className="py-4 flex justify-between">
-                  <div>
-                    <p className="font-medium">{item?.productName}</p>
-                    <p className="text-sm text-gray-500">Quantity: {item?.quantity}</p>
-                  </div>
-                  <p>₹{(item.productPrice * item.quantity).toFixed(2)}</p>
-                </li>
+                <ShoppingCartList key={item?.productId} item={item} setCart={setCart}/>
               ))}
             </ul>
           )}

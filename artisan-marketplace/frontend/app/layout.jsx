@@ -43,6 +43,14 @@ export default function RootLayout({ children }) {
         console.log(err);
       }
     }
+    const getCart = async () => {
+      const response = await fetch('/api/cart');
+      const cart = await response?.json();
+      if(response.ok){
+        const cartItems = cart?.cart?.products
+        setProducts(cartItems?.products);
+      }
+    }
     getUser();
   },[]);
 

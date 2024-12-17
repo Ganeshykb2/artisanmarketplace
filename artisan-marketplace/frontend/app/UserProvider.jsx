@@ -8,5 +8,7 @@ export const useUser = () => useContext(UserContext);
 
 // Set up the provider (optional if wrapping is required)
 export const UserProvider = ({ children, user }) => (
-  <UserContext.Provider value={{userId: user?.userId, userName: user?.userName, userEmail: user?.userEmail, userType: user?.userType}}>{children}</UserContext.Provider>
+  <UserContext.Provider value={{userId: user?.userId, userName: user?.userName, userEmail: user?.userEmail, userType: user?.userType}}>
+    {children}
+  </UserContext.Provider>
 );

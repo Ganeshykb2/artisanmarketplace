@@ -5,7 +5,7 @@ import Artists from '../models/Artists.js';
 
 // Create new artist (open)
 export const createArtist = async (req, res) => {
-  const { name, email, password, businessName, specialization, DOB, AboutHimself, phoneNumber, address, city, state, pincode, aadhar } = req.body;
+  const { name, email, password, businessName, specialization, DOB, AboutHimself, phoneNumber, address, city, state, pincode, aadhar, image } = req.body;
   
   console.log("Console log",req.body);
   try {
@@ -33,6 +33,7 @@ export const createArtist = async (req, res) => {
       state,
       pincode,
       aadhar,
+      profileImage : image,
     });
 
     // Save the new artist to the database
@@ -49,6 +50,17 @@ export const getAllArtists = async (req, res) => {
   try {
     const artists = await Artists.find();
     res.json(artists);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+//Get artist complete details
+export const getArtistsDetails = async (req, res) => {
+  try {
+    const artistId = req.user.id;
+    const artists = await Artists.find({artistId: artistId});
+    res.status(200).json({ message: 'artist fetched successfully', artists });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

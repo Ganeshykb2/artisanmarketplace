@@ -16,15 +16,11 @@ import artistAuth from '../middlewares/artistAuth.js'
 const router = express.Router();
 
 // Public Routes
-router.get('/getevents', getEvents);
 router.get('/:eventId', getEventById);  // Fetch single event details (public)
 
-
-router.post('/create',  createEvent); 
-
 // Protected Routes
-//  router.get('/getevents',artistAuth,getevents);
-// router.post('/create',artistAuth,createEvent);  // Only artisans can create events
+router.post('/create',artistAuth,  createEvent); 
+router.post('/getevents',artistAuth, getEvents);
 router.put('/:eventId', artistAuth, updateEvent);  // Only the artisan who created the event can update
 router.delete('/:eventId', artistAuth, deleteEvent);  // Only the artisan who created the event can delete
 

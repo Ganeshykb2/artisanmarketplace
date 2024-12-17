@@ -8,7 +8,9 @@ export const createEvent = async (req, res) => {
     const { name, eventType, dateOfEvent, location,images, description } = req.body;
     // const artistId = req.user.id; // Get artistId from the authenticated user
 
-    const artistId = "asvjhdfvghvjvbjvj";
+   
+    // Get the artistId from the authenticated user (assuming it's attached to the request)
+    const artistId = req.user.id;
 
     // Check if the authenticated user is an artisan (artist)
     if (!artistId) {
@@ -36,18 +38,20 @@ export const createEvent = async (req, res) => {
 
 export const getEvents = async  (req, res) => {
   try{
-  // const artistId = req.user.id; // Get artistId from the authenticated user
-  const artistId = "asvjhdfvghvjvbjvj";
-
-    // Check if the authenticated user is an artisan (artist)
+  
+    // Get the artistId from the authenticated user (assuming it's attached to the request)
+    const artistId = req.user.id;
     if (!artistId) {
       return res.status(403).json({ message: 'artisans not found' });
     }
 
-    // const events = await Event.find({ artistId: artistId });
-    res.status(200).json({ message: 'Events fetched successfully', artistId });
+    const events = await Event.find({ artistId: artistId });
+    if (!events) {
+      return res.status(404).json({ message: 'Events 3 not found' });
+    }
+    res.status(200).json({ message: 'Events fetched successfully', events });
   } catch (error) {
-    res.status(500).json({ message: 'Error creating event', error });
+    res.status(500).json({ message: 'Error fetching event', error });
 }
 };
 
@@ -57,7 +61,7 @@ export const getEventById = async (req, res) => {
   try {
     const event = await Event.findOne({ eventId });
     if (!event) {
-      return res.status(404).json({ message: 'Event not found' });
+      return res.status(404).json({ message: 'Events not found' });
     }
     res.status(200).json(event);
   } catch (error) {

@@ -58,17 +58,21 @@ export const getAllArtists = async (req, res) => {
 //Get artist complete details
 export const getArtistsDetails = async (req, res) => {
   try {
-    const artistId = req.user.id;
-    const artists = await Artists.find({artistId: artistId});
-    res.status(200).json({ message: 'artist fetched successfully', artists });
+    const artist = await Artists.find({id: req.user.id});
+    if (!artist) {
+      return res.status(404).json({ message: 'Artist not found' });
+    }
+    res.status(200).json({ message: 'Artist fetched successfully', artist });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: error.message });
   }
 };
 
 // Update artist details
 export const updateArtist = async (req, res) => {
-  const { name, email, businessName, specialization, AboutHimself, address, city, state, pincode } = req.body;
+  const { name, email, businessName, specialization,profileImage,phoneNumber,
+    DOB, AboutHimself,aadhar, address, city, state, pincode } = req.body;
 
   try {
     const updatedArtist = await Artists.findOneAndUpdate(
@@ -78,7 +82,11 @@ export const updateArtist = async (req, res) => {
         email,
         businessName,
         specialization,
+        phoneNumber,
+        profileImage,
+        DOB,
         AboutHimself,
+        aadhar,
         address,
         city,
         state,

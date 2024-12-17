@@ -18,7 +18,7 @@ export async function POST(req,res){
                 sameSite: 'strict',
                 path: '/',
             });
-            return NextResponse.json({message: data?.message }, { status: 200 })
+            return NextResponse.json({message: data?.message, user: data?.user }, { status: 200 })
         } else {
             return NextResponse.json( {message: data?.message}, { status: 404 })
         }

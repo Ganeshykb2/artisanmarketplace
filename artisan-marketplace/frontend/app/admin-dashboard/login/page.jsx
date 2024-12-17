@@ -1,34 +1,36 @@
 'use client';
-
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
 import React, { useState } from 'react';
-import { Form, Input, Button, Typography, message } from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
-
-const { Title } = Typography;
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
   const router = useRouter();
 
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setLoading(true);
     try {
+      const formData = new FormData(e.target)
+      const adminData = Object.fromEntries(formData.entries())
       const response = await fetch('/admin-dashboard/login/api', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
+        body: JSON.stringify(adminData),
       });
       const data = await response.json();
       if (response.ok) {
-        message.success(data?.message || 'Login successful!');
-        router.push('/');
+        setMessage(data?.message || 'Login successful!');
+        router.push('/admin-dashboard');
       } else {
-        message.error(data?.message || 'Login failed!');
+        setMessage(data?.message || 'Login failed!');
       }
     } catch (error) {
       console.error(error);
-      message.error('Something went wrong. Please try again.');
+      setMessage('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -37,26 +39,23 @@ export default function LoginPage() {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
       <div style={{ width: 300 }}>
-        <Title level={2} style={{ textAlign: 'center' }}>Admin Login</Title>
-        <Form name="login" onFinish={handleSubmit}>
-          <Form.Item
-            name="username"
-            rules={[{ required: true, message: 'Please input your Username!' }]}
-          >
-            <Input prefix={<UserOutlined />} placeholder="Username" />
-          </Form.Item>
-          <Form.Item
-            name="password"
-            rules={[{ required: true, message: 'Please input your Password!' }]}
-          >
-            <Input.Password prefix={<LockOutlined />} placeholder="Password" />
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit" style={{ width: '100%' }} loading={loading}>
-              Log in
-            </Button>
-          </Form.Item>
-        </Form>
+        <h1 level={2} style={{ textAlign: 'center' }}>Admin Login</h1>
+        <form onSubmit={handleSubmit}>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="consumer-email">Username</Label>
+              <Input id="username" type="text" name="username" placeholder="Enter your Username" required />
+            </div>
+            <div>
+              <Label htmlFor="consumer-password">Password</Label>
+              <Input id="password" type="password" name="password" placeholder="Enter your password" required />
+            </div>
+            <Button type="submit" className="w-full">Login as Admin</Button>
+            <div>
+            {message&&<p className='text-red-500 text-center'>{message}</p>}
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   );

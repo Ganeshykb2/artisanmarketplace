@@ -130,8 +130,7 @@ export const adminRegister = async (req, res) => {
     }
 
     // Hash the password
-    const salt = bcrypt.genSaltSync(10);
-    const hashedPassword = bcrypt.hashSync(password, salt);
+    const hashedPassword = bcrypt.hashSync(password, 10);
 
     // Create a new admin document
     const newAdmin = new Admins({
@@ -156,13 +155,13 @@ export const adminLogin = async (req, res) => {
     const admin = await Admins.findOne({ username });
 
     if (!admin) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(404).json({ message: 'User Not Found' });
     }
 
     const isMatch = await bcrypt.compare(password, admin.password);
 
     if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ message: 'Incorrect Password' });
     }
 
     const token = jwt.sign({ adminId: admin.id }, process.env.JWT_SECRET, { expiresIn: '1d' });

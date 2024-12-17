@@ -89,9 +89,53 @@ export async function POST(req) {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    return new NextResponse(JSON.stringify({ success: false, message: "Error updating cart", error }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+      return new NextResponse(JSON.stringify({ success: false, message: "Error updating cart", error }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
   }
+}
+
+export async function PUT(req,res){
+  const { productId } = await req.json();
+
+    if (!productId) {
+      return new NextResponse(JSON.stringify({ success: false, message: "Product ID is required" }), {
+        status: 400,
+      });
+    }
+
+    try{
+      const cookieStore = await cookies();
+      const token = cookieStore.get('token');
+
+      const response = await fetch('http://localhost:5000/api/carts/remove-item',{
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token?.value}` },
+          body: JSON.stringify({productId}),
+      })
+
+      const result = await response?.json();
+      
+      console.log(result);
+      if(!response.ok){
+        return new NextResponse(JSON.stringify({ success: false, message: "Error updating cart" }), {
+          status: 404,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+
+      return new NextResponse(JSON.stringify({ success: true, cart: result?.cart }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    }catch(err){
+      return new NextResponse(JSON.stringify({ success: false, message: "Error updating cart", error }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Get cookies and retrieve the cart
+    
 }

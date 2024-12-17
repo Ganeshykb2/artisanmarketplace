@@ -8,21 +8,30 @@ import ShoppingCartModal from './shoppingCartModal'
 export function ShoppingCartItem() {
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [cartItems, setCartItems] = useState([])
+  const [cart,setCart] = useState(null);
 
   const itemCount = cartItems?.reduce((sum, item) => sum + item.quantity, 0)
 
-  const openCart = async () => {
-    setIsCartOpen(true);
+  const getCart = async ()=>{
     try{
       const response = await fetch('/api/cart');
       const cart = await response?.json();
       if(response.ok){
-        const cartItems = cart?.cart
-        setCartItems(cartItems?.products);
+        const cartItems = cart?.cart?.products
+        setCartItems(cartItems);
       }
     } catch(err){
       console.log(err);
     }
+  }
+
+  useEffect(()=>{
+    getCart();
+  },[cart]);
+
+  const openCart = async () => {
+    setIsCartOpen(true);
+    getCart();
   }
   const closeCart = () => setIsCartOpen(false)
 
@@ -46,7 +55,7 @@ export function ShoppingCartItem() {
           </div>
         </div>
       </div>
-      <ShoppingCartModal isOpen={isCartOpen} onClose={closeCart} items={cartItems} />
+      <ShoppingCartModal isOpen={isCartOpen} onClose={closeCart} items={cartItems} setCart={setCart} />
     </>
   )
 }

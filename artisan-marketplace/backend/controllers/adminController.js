@@ -166,7 +166,16 @@ export const adminLogin = async (req, res) => {
     }
 
     const token = jwt.sign({ adminId: admin.id }, process.env.JWT_SECRET, { expiresIn: '1d' });
-    res.status(200).json({ token });
+    res.status(200).json({
+      message: 'Login successful',
+      token,
+      user: {
+        id: admin.id,
+        name: admin.name,
+        username: admin.username,
+        userType: 'admin',
+      },
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -7,10 +7,10 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { CheckCircle, AlertCircle } from "lucide-react"
+import { UnverifiedArtists } from '@/components/ui/unverifiedArtist'
 
 export default function ArtistsPage() {
   const [artists, setArtists] = useState([])
-  const [unverifiedArtists, setUnverifiedArtists] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
@@ -22,10 +22,11 @@ export default function ArtistsPage() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('/admin-dashboard/allartists/api', { method: 'GET' });
+      const response = await fetch('/admin-dashboard/allartists/api');
 
       if (!response.ok) throw new Error('Failed to fetch artists');
       const { data } = await response.json();
+      console.log(data);
       setArtists(Array.isArray(data) ? data : []);
     } catch (err) {
       setError(err.message);
@@ -34,48 +35,7 @@ export default function ArtistsPage() {
     }
   };
 
-  const fetchUnverifiedArtists = async () => {
-    setLoading(true)
-    try {
-      const response = await fetch('/admin-dashboard/allartists/updateall/api', { 
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-      })
-  
-      if (!response.ok) throw new Error('Failed to fetch unverified artists')
-      const { data } = await response.json() // Destructure data from the response
-      setUnverifiedArtists(Array.isArray(data) ? data : [])
-    } catch (err) {
-      setError('Error fetching unverified artists')
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
-  }
 
-  const updateUnverifiedArtists = async () => {
-    setLoading(true)
-    try {
-      const response = await fetch('/admin-dashboard/allartists/updateall/api', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
-      if (!response.ok) throw new Error('Failed to update artists')
-      const data = await response.json()
-      alert(data.message)
-      fetchAllArtists() // Refresh the list after update
-    } catch (err) {
-      setError('Error updating artists')
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const verifyArtist = async (artistId) => {
     setLoading(true)
@@ -105,32 +65,10 @@ export default function ArtistsPage() {
       <h1 className="text-2xl font-bold mb-4">Artists Management</h1>
       
       <div className="flex space-x-4 mb-4">
-        <Button onClick={fetchUnverifiedArtists} disabled={loading}>
-          Fetch Unverified Artists with 5+ Orders
-        </Button>
-        <Button onClick={updateUnverifiedArtists} disabled={loading}>
-          Update Unverified Artists
-        </Button>
+        <UnverifiedArtists></UnverifiedArtists>
       </div>
 
       {error && <p className="text-red-500 mb-4">{error}</p>}
-
-      {unverifiedArtists.length > 0 && (
-        <Card className="mb-4">
-          <CardHeader>
-            <CardTitle>Unverified Artists with 5+ Orders</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul>
-              {unverifiedArtists.map((artist) => (
-                <li key={artist.id} className="mb-2">
-                  {artist.name} - Orders: {artist.orderCount}
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
-      )}
 
       <Card>
         <CardHeader>
@@ -172,6 +110,7 @@ export default function ArtistsPage() {
                     <p><strong>Rating:</strong> {artist.rating.toFixed(1)}/5</p>
                     <p><strong>Profile Views:</strong> {artist.profileViews}</p>
                     <p><strong>Joined:</strong> {new Date(artist.createdAt).toLocaleDateString()}</p>
+                    <p><strong>Orders:</strong> {artist.orderCount}</p>
                     <div className="flex items-center mt-2">
                       {artist.verified ? (
                         <CheckCircle className="h-5 w-5 text-blue-500" />
@@ -189,7 +128,7 @@ export default function ArtistsPage() {
                         <AccordionContent>
                           <p><strong>About:</strong> {artist.AboutHimself}</p>
                           <p><strong>Aadhar:</strong> {artist.aadhar}</p>
-                          {artist.secondaryAddresses.length > 0 && (
+                          {artist.secondaryAddresses?.length > 0 && (
                             <div>
                               <p className="font-semibold mt-2">Secondary Addresses:</p>
                               <ul>

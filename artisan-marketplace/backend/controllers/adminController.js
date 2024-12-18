@@ -12,7 +12,30 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const getAllArtists = async (req, res) => {
   try {
-    const artists = await Artists.find({});
+    const artists = await Artists.aggregate([
+      {
+        $lookup: {
+          from: "orders", // the name of the Orders collection
+          localField: "id", // use the 'id' field from Artists
+          foreignField: "artisanId", // field from Orders
+          as: "orders", // alias for joined data
+        },
+      },
+      {
+        $addFields: {
+          orderCount: { $size: "$orders" }, // count the number of orders for each artisan
+        },
+      },
+      {
+        $project: {
+          orders: 0, // exclude the orders array from the output if not needed
+          _id: 0, // exclude the default _id field
+        },
+      },
+    ]);
+    if(!artists){
+      res.status(404).json({message: "No Artists Found"});
+    }
     res.status(200).json(artists);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -26,10 +49,10 @@ export const getAllUnverifiedArtistsWithOrders = async (req, res) => {
 
     if (!unverifiedArtists) {
       return res
-        .status(200)
+        .status(404)
         .json({ message: "No unverified artists with 5 or more orders found." });
     }
-
+    
     res.status(200).json(unverifiedArtists);
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 // Fetch unverified artists with orders 5 or more
-export async function GET_unverified() {
+export async function GET() {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get('token');

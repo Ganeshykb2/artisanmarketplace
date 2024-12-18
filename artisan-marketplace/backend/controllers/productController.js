@@ -167,6 +167,25 @@ export const getAllProducts = async (req, res) => {
   }
 };
 
+export const getProductsById = async (req,res) => {
+  try {
+    const { productId } = req.params;
+
+    const product = await Product.findOne({ productId: { $in: productId } });
+    // Check if there are no products
+    if (!product) {
+      return res.status(404).json({ message: 'No products found' });
+    }
+
+    // Return the list of all products
+    res.status(200).json({ message: 'All products fetched successfully', product });
+  } catch (error) {
+    // Handle any errors
+    console.error('Error fetching all products:', error);
+    res.status(500).json({ message: 'Error fetching all products', error: error.message });
+  }
+}
+
 export const getProductsByIds = async (req, res) => {
   try {
     // Extract the products array from the request body

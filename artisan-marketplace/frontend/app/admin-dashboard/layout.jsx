@@ -4,19 +4,39 @@ import React from 'react'
 import Link from 'next/link'
 import { useSelectedLayoutSegment } from 'next/navigation'
 import { Layout, Menu } from 'antd'
-import { UserOutlined, ShoppingOutlined, OrderedListOutlined, CalendarOutlined, LogoutOutlined } from '@ant-design/icons'
+import { UserOutlined, ShoppingOutlined, OrderedListOutlined, CalendarOutlined, LogoutOutlined, LoginOutlined } from '@ant-design/icons'
 
 const { Sider, Content } = Layout
 
 const AdminLayout = ({ children }) => {
   const selectedLayoutSegment = useSelectedLayoutSegment()
 
-  const handleLogout = () => {
-    // TODO: Implement logout logic
-    console.log('Logout clicked')
-  }
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('/admin-dashboard/logout/api', {
+        method: 'GET',
+      });
+  
+      if (response.ok) {
+        alert('You have been logged out successfully.');
+        window.location.href = 'http://localhost:3000/admin-dashboard/login'; // Redirect to the login page
+      } else {
+        const data = await response.json();
+        console.error('Logout failed:', data.message);
+        alert(`Logout failed: ${data.message}`);
+      }
+    } catch (error) {
+      console.error('An error occurred during logout:', error);
+      alert('An unexpected error occurred. Please try again.');
+    }
+  };
 
   const menuItems = [
+    {
+      key: 'login',
+      icon: <LoginOutlined />,
+      label: <Link href="/admin-dashboard/login">Login</Link>,
+    },
     {
       key: 'artists',
       icon: <UserOutlined />,
@@ -68,4 +88,3 @@ const AdminLayout = ({ children }) => {
 }
 
 export default AdminLayout
-

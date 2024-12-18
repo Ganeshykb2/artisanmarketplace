@@ -37,16 +37,15 @@ export default function ArtistsPage() {
   const fetchUnverifiedArtists = async () => {
     setLoading(true)
     try {
-      const response = await fetch('/admin-dashboard/allartists/api/updateall/api', {
+      const response = await fetch('/admin-dashboard/allartists/updateall/api', { 
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
-          
+          'Content-Type': 'application/json'
         },
       })
-
+  
       if (!response.ok) throw new Error('Failed to fetch unverified artists')
-      const data = await response.json()
+      const { data } = await response.json() // Destructure data from the response
       setUnverifiedArtists(Array.isArray(data) ? data : [])
     } catch (err) {
       setError('Error fetching unverified artists')
@@ -59,7 +58,7 @@ export default function ArtistsPage() {
   const updateUnverifiedArtists = async () => {
     setLoading(true)
     try {
-      const response = await fetch('/admin-dashboard/allartists/api/updateall/api', {
+      const response = await fetch('/admin-dashboard/allartists/updateall/api', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

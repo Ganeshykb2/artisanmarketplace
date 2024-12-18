@@ -1,4 +1,4 @@
-// backend\controllers\adminController.js
+// backend/controllers/adminController.js
 import Artists from '../models/Artists.js';
 import Products from '../models/Products.js';
 import Orders from '../models/Orders.js';
@@ -24,7 +24,7 @@ export const getAllUnverifiedArtistsWithOrders = async (req, res) => {
   try {
     const unverifiedArtists = await unverifiedArtistsWithOrders();
 
-    if (!unverifiedArtists.length) {
+    if (!unverifiedArtists) {
       return res
         .status(200)
         .json({ message: "No unverified artists with 5 or more orders found." });
@@ -244,22 +244,6 @@ export const getArtistsWithProducts = async (req, res) => {
 };
 
 // http://localhost:5000/api/admins/register  --> POST request
-// {
-//   "name": "Admin Name",
-//   "username": "admin_username",
-//   "email": "admin@example.com",
-//   "password": "securepassword"
-// }
-// http://localhost:5000/api/admins/login --> POST request
-//{
-// "username": "admin_username",
-// "password": "securepassword"
-// }
-// http://localhost:5000/api/admins/artists -->get request
-// http://localhost:5000/api/admins/unverified-artists -->get Request
-// http://localhost:5000/api/admins/products -->get request
-// http://localhost:5000/api/admins/orders --> get request
-// http://localhost:5000/api/admins/events -->get request
-// 
+
 
 

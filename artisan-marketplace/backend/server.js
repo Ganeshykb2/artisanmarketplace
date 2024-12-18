@@ -14,6 +14,8 @@ import eventRoutes from './routes/eventRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js'; // Add payment routes
 import cartRoutes from './routes/cartRoutes.js';
 import { validToken } from './middlewares/validToken.js';
+import contactRoutes from './routes/contactRoutes.js';
+
 
 // Load environment variables from .env file
 dotenv.config();
@@ -65,6 +67,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/carts', cartRoutes);
+app.use('/api/contact', contactRoutes);
 
 app.get('/api/vaild-token', validToken); // Valid Token
 

@@ -1,31 +1,29 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import { v4 as uuidv4 } from "uuid";
 
 const ContactSchema = new mongoose.Schema({
-  customerId : {
+  id: {
     type: String,
-    ref: 'Customers',
+    default: uuidv4,
     required: true,
+    unique: true,
   },
   name: {
     type: String,
-    required: true,
+    required: true
   },
   email: {
     type: String,
-    required: true,
+    required: true
   },
   message: {
     type: String,
-    required: true,
+    required: true
   },
   createdAt: {
     type: Date,
-    default: Date.now,
-  }});
+    default: Date.now
+  }
+});
 
-ContactSchema.pre('save', function(next) {
-    this.updatedAt = Date.now();
-    next();
-  });
-
-export default mongoose.models.Contacts || mongoose.model('Contacts', ContactSchema);
+export default mongoose.models.Contact || mongoose.model('Contact', ContactSchema);

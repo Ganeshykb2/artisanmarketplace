@@ -2,11 +2,12 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight, ShoppingCart } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle,CardFooter } from '@/components/ui/card'
 import { useUser } from './UserProvider'
 import Products from '@/components/ui/Products'
+import { Calendar, MapPin } from 'lucide-react'
 
 export default function Home() {
   const { userName } = useUser();
@@ -97,42 +98,49 @@ export default function Home() {
             <p>No artist of the month available</p>
           )}
         </section>
-
-        {/* Upcoming Events Section */}
+{/* Upcoming Events Section */}
         <section>
-        <h2 className="text-3xl font-semibold mb-6">Upcoming Events</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {upcomingEvents.length > 0 ? (
-            upcomingEvents.map((event) => (
-              <Card key={event.eventId} className="flex flex-col md:flex-row">
-                <div className="w-full h-60 overflow-hidden">
-                  <Image
-                    src={event.images[0]}
-                    alt={`Product ${event.name}`}
-                    width={300}
-                    height={300}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="w-full md:w-2/3 flex flex-col">
-                  <CardHeader>
-                    <CardTitle>{event.name}</CardTitle>
-                    <CardDescription>
-                      {new Date(event.dateOfEvent).toLocaleDateString()} • {event.location}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p>{event.description}</p>
-                    <Button className="mt-4">Learn More</Button>
-                  </CardContent>
-                </div>
-              </Card>
-            ))
-          ) : (
-            <p>No upcoming events available</p>
-          )}
-        </div>
-      </section>
+          <h2 className="text-3xl font-semibold mb-6">Upcoming Events</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {upcomingEvents.length > 0 ? (
+              upcomingEvents.map((event) => (
+                <Card key={event.eventId} className="flex flex-row">
+                  <div className="w-1/1">
+                    <Image
+                      src={event.images[0]}
+                      alt={`Event ${event.name}`}
+                      width={300}
+                      height={300}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  
+                  <div className="w-2/3 p-6 flex flex-col justify-between">
+                    <div>
+                      <CardTitle className="text-2xl mb-1">{event.name}</CardTitle>
+                      <CardDescription className="text-base mb-3">{event.eventType}</CardDescription>
+                      
+                      <div className="space-y-2">
+                        <p className="flex items-center">
+                          <Calendar className="mr-2 h-4 w-4 opacity-70" /> 
+                          {new Date(event.dateOfEvent).toLocaleDateString()}
+                        </p>
+                        <p className="flex items-center">
+                          <MapPin className="mr-2 h-4 w-4 opacity-70" /> {event.location}
+                        </p>
+                        <p className="mt-2 opacity-70">{event.description}</p>
+                      </div>
+                    </div>
+                    
+                    <Button className="w-full mt-4">Register for Event</Button>
+                  </div>
+                </Card>
+              ))
+            ) : (
+              <p>No upcoming events available</p>
+            )}
+          </div>
+        </section>
       </div>
     </main>
   );

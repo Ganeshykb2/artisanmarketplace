@@ -4,7 +4,7 @@ import React from 'react'
 import Link from 'next/link'
 import { useSelectedLayoutSegment } from 'next/navigation'
 import { Layout, Menu } from 'antd'
-import { UserOutlined, ShoppingOutlined, OrderedListOutlined, CalendarOutlined, LogoutOutlined, LoginOutlined } from '@ant-design/icons'
+import { UserOutlined, ShoppingOutlined, OrderedListOutlined, CalendarOutlined, LogoutOutlined, LoginOutlined, ContactsOutlined } from '@ant-design/icons'
 
 const { Sider, Content } = Layout
 
@@ -56,6 +56,11 @@ const AdminLayout = ({ children }) => {
       key: 'events',
       icon: <CalendarOutlined />,
       label: <Link href="/admin-dashboard/events">Events</Link>,
+    },
+    {
+      key: 'contacts',
+      icon: <ContactsOutlined />,
+      label: <Link href="/admin-dashboard/contacts">Contacts</Link>,
     },
     {
       key: 'logout',

@@ -76,7 +76,7 @@ export const getUpcomingEvents = async (req, res) => {
     const upcomingEvents = await Event.find({ dateOfEvent: { $gte: currentDate } })
       .sort({ dateOfEvent: 1 }) // Sort by ascending date
       .limit(4) // Limit to 4 events
-      .select('dateOfEvent location description name eventId images'); // Select only necessary fields
+      .select('dateOfEvent location description name eventId images evenType'); // Select only necessary fields
 
     if (!upcomingEvents) {
       console.log(upcomingEvents);

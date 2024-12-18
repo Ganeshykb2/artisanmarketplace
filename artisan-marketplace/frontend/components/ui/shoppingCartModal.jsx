@@ -41,7 +41,7 @@ export default function ShoppingCartModal({ isOpen, onClose, items, updateCart }
           </div>
         )}
         <div className="mt-4 flex justify-end">
-          <Button onClick={onClose}>Close</Button>
+          <Button onClick={()=>{window.location.href='/Buynow'}}>Checkout</Button>
         </div>
       </DialogContent>
     </Dialog>

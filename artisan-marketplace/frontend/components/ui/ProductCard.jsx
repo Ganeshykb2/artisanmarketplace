@@ -95,7 +95,7 @@ function ProductCard({ product }) {
       <CardContent>
         <p className="text-2xl font-bold mb-4">₹{product.price}</p>
         <div className="flex space-x-2">
-          <Button className="flex-1">Buy Now</Button>
+          <Button className="flex-1" onClick={()=>{window.location.href = `/Buynow?productId=${product?.productId}`}}>Buy Now</Button>
           {addToCart > 0 ? (
             <CartButton
               handleMinus={handleRemoveFromCart}

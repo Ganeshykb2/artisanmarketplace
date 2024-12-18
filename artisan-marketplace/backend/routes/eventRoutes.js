@@ -16,7 +16,7 @@ import artistAuth from '../middlewares/artistAuth.js'
 const router = express.Router();
 
 // Public Routes
-router.get('/:eventId', getEventById);  // Fetch single event details (public)
+router.get('get-event/:eventId', getEventById);  // Fetch single event details (public)
 
 // Protected Routes
 router.post('/create',artistAuth,  createEvent); 

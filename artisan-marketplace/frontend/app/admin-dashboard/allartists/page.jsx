@@ -19,33 +19,29 @@ export default function ArtistsPage() {
   }, [])
 
   const fetchAllArtists = async () => {
-    setLoading(true)
+    setLoading(true);
+    setError(null);
     try {
-      const response = await fetch('/admin-dashboard/allartists/api', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
+      const response = await fetch('/admin-dashboard/allartists/api', { method: 'GET' });
 
-      if (!response.ok) throw new Error('Failed to fetch artists')
-      const data = await response.json()
-      setArtists(Array.isArray(data) ? data : [])
+      if (!response.ok) throw new Error('Failed to fetch artists');
+      const { data } = await response.json();
+      setArtists(Array.isArray(data) ? data : []);
     } catch (err) {
-      setError('Error fetching artists')
-      console.error(err)
+      setError(err.message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const fetchUnverifiedArtists = async () => {
     setLoading(true)
     try {
-      const response = await fetch('/admin-dashboard/allartists/api/api', {
+      const response = await fetch('/admin-dashboard/allartists/api/updateall/api', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          
         },
       })
 
@@ -63,7 +59,7 @@ export default function ArtistsPage() {
   const updateUnverifiedArtists = async () => {
     setLoading(true)
     try {
-      const response = await fetch('/admin-dashboard/allartists/api/api', {
+      const response = await fetch('/admin-dashboard/allartists/api/updateall/api', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

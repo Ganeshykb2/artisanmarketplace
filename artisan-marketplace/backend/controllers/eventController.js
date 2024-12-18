@@ -76,14 +76,16 @@ export const getUpcomingEvents = async (req, res) => {
     const upcomingEvents = await Event.find({ dateOfEvent: { $gte: currentDate } })
       .sort({ dateOfEvent: 1 }) // Sort by ascending date
       .limit(4) // Limit to 4 events
-      .select('dateOfEvent location description name'); // Select only necessary fields
+      .select('dateOfEvent location description name eventId images'); // Select only necessary fields
 
-    if (!upcomingEvents.length) {
+    if (!upcomingEvents) {
+      console.log(upcomingEvents);
       return res.status(404).json({ message: 'No upcoming events found' });
     }
 
     res.status(200).json({ message: 'Upcoming events fetched successfully', events: upcomingEvents });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: 'Error fetching upcoming events', error });
   }
 };

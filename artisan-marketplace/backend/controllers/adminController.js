@@ -21,13 +21,20 @@ export const getAllArtists = async (req, res) => {
 
 // Function to fetch all unverified artists with 5 or more than 5 orders.
 export const getAllUnverifiedArtistsWithOrders = async (req, res) => {
-  try{
-    const unverifiedArtists = unverifiedArtistsWithOrders();
+  try {
+    const unverifiedArtists = await unverifiedArtistsWithOrders();
+
+    if (!unverifiedArtists.length) {
+      return res
+        .status(200)
+        .json({ message: "No unverified artists with 5 or more orders found." });
+    }
+
     res.status(200).json(unverifiedArtists);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-}
+};
 
 export const getAllProducts = async (req, res) => {
   try {

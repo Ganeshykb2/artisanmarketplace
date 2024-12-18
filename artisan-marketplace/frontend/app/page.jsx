@@ -34,6 +34,7 @@ export default function Home() {
         const response = await fetch('http://localhost:5000/api/events/upcoming');
         const data = await response.json();
         if (data.events) {
+          console.log(data.events)
           setUpcomingEvents(data.events);
         }
       } catch (error) {
@@ -99,11 +100,21 @@ export default function Home() {
 
         {/* Upcoming Events Section */}
         <section>
-          <h2 className="text-3xl font-semibold mb-6">Upcoming Events</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {upcomingEvents.length > 0 ? (
-              upcomingEvents.map((event) => (
-                <Card key={event.eventId}>
+        <h2 className="text-3xl font-semibold mb-6">Upcoming Events</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {upcomingEvents.length > 0 ? (
+            upcomingEvents.map((event) => (
+              <Card key={event.eventId} className="flex flex-col md:flex-row">
+                <div className="w-full h-60 overflow-hidden">
+                  <Image
+                    src={event.images[0]}
+                    alt={`Product ${event.name}`}
+                    width={300}
+                    height={300}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="w-full md:w-2/3 flex flex-col">
                   <CardHeader>
                     <CardTitle>{event.name}</CardTitle>
                     <CardDescription>
@@ -114,13 +125,14 @@ export default function Home() {
                     <p>{event.description}</p>
                     <Button className="mt-4">Learn More</Button>
                   </CardContent>
-                </Card>
-              ))
-            ) : (
-              <p>No upcoming events available</p>
-            )}
-          </div>
-        </section>
+                </div>
+              </Card>
+            ))
+          ) : (
+            <p>No upcoming events available</p>
+          )}
+        </div>
+      </section>
       </div>
     </main>
   );

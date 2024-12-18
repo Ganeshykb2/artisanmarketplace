@@ -36,7 +36,7 @@ export async function GET_unverified() {
   }
   
 // Update all unverified artists to verified
-export async function PUT_updateAll() {
+export async function PUT() {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get("token");

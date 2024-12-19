@@ -1,6 +1,6 @@
 //./routes/artistRoutes.js
 import express from 'express';
-import { createArtist, getAllArtists,getArtistsDetails, updateArtist, deleteArtist, loginArtist, getArtistOfTheMonth} from '../controllers/artistController.js';
+import { createArtist, getAllArtists,getArtistsDetails, updateArtist, deleteArtist, loginArtist, getArtistOfTheMonth, joinEvent,} from '../controllers/artistController.js';
 import artistAuth from '../middlewares/artistAuth.js'; // Import Artist Authorization middleware
 
 const router = express.Router();
@@ -30,4 +30,5 @@ router.delete('/:id', artistAuth, async (req, res) => {
   deleteArtist(req, res);  // Proceed with the delete
 });
 router.get('/artist-of-the-month', getArtistOfTheMonth);
+router.post('/join-event', artistAuth, joinEvent);
 export default router;

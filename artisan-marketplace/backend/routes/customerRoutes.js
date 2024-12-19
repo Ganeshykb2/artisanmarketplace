@@ -6,8 +6,6 @@ import {
   placeOrder, 
   getProducts, 
   getEventByName,
-  joinEventById,
-  joinEventByName,
   getArtistProfile, 
   getAllArtists,
   getProductById, // New method to fetch product by ID
@@ -15,7 +13,7 @@ import {
   submitProductReview, // New method to submit product review
   getEvents, // New method to fetch all events
   makePayment,
-  getCustomerAddressDetails,
+  getCustomerAddressDetails
 } from '../controllers/customerController.js';
 import { checkAuth } from '../middlewares/authMiddleware.js';
 
@@ -34,8 +32,6 @@ router.get('/event/name/:eventName', getEventByName); // Get event by name
 // Authenticated routes
 router.get('/orders', checkAuth, getCustomerOrders); // Get customer's orders
 router.post('/order', checkAuth, placeOrder); // Place a new order
-router.post('/join-event/id/:eventId', checkAuth, joinEventById); // Join event by ID
-router.post('/join-event/name/:eventName', checkAuth, joinEventByName); // Join event by name
 router.post('/products/:productId/reviews', checkAuth, submitProductReview); // Submit product review
 router.get('/artist/:artistId', checkAuth, getArtistProfile); // Get particular artist profile details, rate-limited
 router.post('/payment', checkAuth, makePayment); // New route for making a payment

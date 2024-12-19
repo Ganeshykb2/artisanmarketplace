@@ -10,7 +10,6 @@ export default function Artisans() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold mb-8">Our Artisans</h1>
-      
       <div className="flex flex-col md:flex-row gap-4 mb-8">
         <div className="w-full md:w-64 space-y-4">
           <div className="relative">

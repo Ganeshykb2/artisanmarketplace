@@ -11,7 +11,6 @@ import customerRoutes from './routes/customerRoutes.js'; // Add customer routes
 import orderRoutes from './routes/orderRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import eventRoutes from './routes/eventRoutes.js';
-import paymentRoutes from './routes/paymentRoutes.js'; // Add payment routes
 import cartRoutes from './routes/cartRoutes.js';
 import { validToken } from './middlewares/validToken.js';
 import contactRoutes from './routes/contactRoutes.js';
@@ -65,7 +64,7 @@ app.use('/api/customers', customerRoutes); // customer routes
 app.use('/api/orders', orderRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/events', eventRoutes);
-app.use('/api/payments', paymentRoutes);
+
 app.use('/api/carts', cartRoutes);
 app.use('/api/contact', contactRoutes);
 

@@ -34,7 +34,7 @@ const OrdersSchema = new mongoose.Schema({
   },
   artistIds: [{
     type: String,
-    ref: 'Artisans',
+    ref: 'Artists',
     required: true,
   }],
   customerId: {

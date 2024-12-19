@@ -1,6 +1,7 @@
 import Order from '../models/Orders.js';
 import Product from '../models/Products.js';
 import Customer from '../models/Customers.js';
+import Artists from '../models/Artists.js'; 
 
 // Create Order
 export const createOrder = async (req, res) => {
@@ -96,18 +97,26 @@ export const getOrderById = async (req, res) => {
 
 // Get All Orders for a Customer
 export const getOrdersByCustomer = async (req, res) => {
-  const { customerId } = req.user; // Get customer ID from token
-
+  const customerId = req.user.id;
   try {
-    const orders = await Order.find({ customerId }).populate('items.productId artisanId');
-
+    // First try to get orders without population
+    const orders = await Order.find({ customerId });
+    
+    // Then populate only if orders exist
+    if (orders && orders.length > 0) {
+      const populatedOrders = await Order.find({ customerId })
+        .populate('items.productId');
+      
+      return res.json(populatedOrders);
+    }
+    
     if (!orders || orders.length === 0) {
       return res.status(404).json({ message: 'No orders found for this customer' });
     }
 
-    res.json(orders);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching customer orders', error });
+    console.error('Error details:', error);
+    res.status(500).json({ message: 'Error fetching customer orders', error: error.message });
   }
 };
 

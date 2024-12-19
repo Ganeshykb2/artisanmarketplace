@@ -108,7 +108,7 @@ export default function ArtistsPage() {
                     <p><strong>DOB:</strong> {new Date(artist.DOB).toLocaleDateString()}</p>
                     <p><strong>Address:</strong> {artist.address}, {artist.city}, {artist.state}, {artist.pincode}</p>
                     <p><strong>Rating:</strong> {artist.rating.toFixed(1)}/5</p>
-                    <p><strong>Profile Views:</strong> {artist.profileViews}</p>
+
                     <p><strong>Joined:</strong> {new Date(artist.createdAt).toLocaleDateString()}</p>
                     <p><strong>Orders:</strong> {artist.orderCount}</p>
                     <div className="flex items-center mt-2">

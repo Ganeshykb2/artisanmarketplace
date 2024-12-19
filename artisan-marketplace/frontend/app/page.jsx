@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle,CardFooter } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
 import { useUser } from './UserProvider'
 import Products from '@/components/ui/Products'
 import { Calendar, MapPin } from 'lucide-react'
@@ -15,7 +15,6 @@ export default function Home() {
   const [upcomingEvents, setUpcomingEvents] = useState([]);
 
   useEffect(() => {
-    
     // Fetch Artist of the Month
     const fetchArtistOfTheMonth = async () => {
       try {
@@ -35,16 +34,47 @@ export default function Home() {
         const response = await fetch('http://localhost:5000/api/events/upcoming');
         const data = await response.json();
         if (data.events) {
-          console.log(data.events)
           setUpcomingEvents(data.events);
         }
       } catch (error) {
         console.error('Error fetching upcoming events:', error);
       }
     };
+
+    // Fetch the data when the component is mounted
     fetchArtistOfTheMonth();
     fetchUpcomingEvents();
   }, []);
+
+  const handleRegister = async (eventId) => {
+    if (!eventId) {
+      alert('Invalid event ID');
+      return;
+    }
+  
+    try {
+      // Send a POST request to your Next.js API route for registration
+      const response = await fetch('/events/api', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ eventId }), // Send the event ID in the body
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to register for event');
+      }
+  
+      alert(data.message || 'Successfully registered for the event!');
+    } catch (error) {
+      console.error('Registration error:', error);
+      alert(error.message || 'An error occurred while registering');
+    }
+  };
+  
 
   return (
     <main className="flex-grow container mx-auto px-4 py-8">
@@ -90,7 +120,6 @@ export default function Home() {
                     {artistOfTheMonth.AboutHimself ||
                       'An exceptional artist creating unique and high-quality products.'}
                   </p>
-                  <Button>View Profile</Button>
                 </div>
               </div>
             </Card>
@@ -98,7 +127,8 @@ export default function Home() {
             <p>No artist of the month available</p>
           )}
         </section>
-{/* Upcoming Events Section */}
+
+        {/* Upcoming Events Section */}
         <section>
           <h2 className="text-3xl font-semibold mb-6">Upcoming Events</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -131,8 +161,7 @@ export default function Home() {
                         <p className="mt-2 opacity-70">{event.description}</p>
                       </div>
                     </div>
-                    
-                    <Button className="w-full mt-4">Register for Event</Button>
+                    <Button className="w-full mt-4" onClick={() => handleRegister(event.eventId)}>Register for Event</Button>
                   </div>
                 </Card>
               ))

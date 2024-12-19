@@ -20,7 +20,7 @@ router.put('/update', artistAuth, updateArtist );
 router.get('/getartistdetails',artistAuth,getArtistsDetails)
 
 // Delete artist account (only accessible by the artist after login)
-router.delete('/:id', artistAuth, async (req, res) => {
+router.delete('/delete/:id', artistAuth, async (req, res) => {
   const artistId = req.params.id;
 
   // Ensure the logged-in artist can only delete their own account

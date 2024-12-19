@@ -4,12 +4,16 @@ import { Card, CardTitle, CardDescription, CardFooter, CardContent, CardHeader }
 import { Button } from '@/components/ui/button';
 import { useSearchParams } from 'next/navigation'
 import Image from 'next/image';
-import CartButton from '@/components/ui/cartButton';
 import ShoppingCartList from '@/components/ui/shoppingCartList';
+import AddressModal from '@/components/ui/AddressModal';
+import CartButton from '@/components/ui/cartButton';
 
 const BuyNow = () => {
   const [product, setProduct] = useState({});
   const [cartItems, setCartItems] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [count,setCount] = useState(1);
+
 
   const total = cartItems?.reduce((sum, item) => sum + item.productPrice * item.quantity, 0);
 
@@ -64,8 +68,18 @@ const BuyNow = () => {
       );
     };
   
+    const handlePlus = ()=>{
+      setCount((prevItems) => prevItems+=1);
+    }
+    const handleMinus = ()=>{
+      setCount((prevItems) => prevItems-=1);
+    }
+  const handlePurchase = async () => {
+    try{
 
-  const handlePurchase = () => {
+    }catch(err){
+      console.log(err);
+    }
   };
 
   return (
@@ -90,9 +104,11 @@ const BuyNow = () => {
             <CardDescription className="text-lg font-bold mt-2">₹{product?.price}</CardDescription>
           </CardContent>
           <CardFooter className="mt-4">
-            <Button onClick={handlePurchase} className="bg-green-600 text-white hover:bg-green-700">
-              Place Order
-            </Button>
+            <div className='flex flex-col gap-5'>
+              <CartButton handleMinus={handleMinus} handlePlus={handlePlus} count={count}/>
+              <Button onClick={() => {setIsModalOpen(true);} }>Place Order</Button>
+              <AddressModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} productId={product?.productId} quantity={count} orderType={'single'}/>
+            </div>
           </CardFooter>
         </Card>
       ) : (
@@ -117,10 +133,10 @@ const BuyNow = () => {
               <p className="font-bold">₹{total.toFixed(2)}</p>
             </div>
             <div className='flex justify-center py-6'>
-              <Button className="bg-green-600 text-white hover:bg-green-700">Place Order</Button>
+            <Button onClick={() => {setIsModalOpen(true)} }>Place Order</Button>
+            <AddressModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} cartItems={cartItems} orderType={'cart'}/>
             </div>
           </div>
-          
         )}
       </div>
       )}

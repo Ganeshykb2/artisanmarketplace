@@ -1,42 +1,70 @@
 import Order from '../models/Orders.js';
 import Product from '../models/Products.js';
 import Customer from '../models/Customers.js';
-import Artist from '../models/Artists.js';
 
 // Create Order
 export const createOrder = async (req, res) => {
   try {
-    const { productId, quantity, shippingAddress } = req.body;
-    const { customerId } = req.user; // Assuming the user is authenticated and their ID is stored in the JWT token
+    const { productIds, quantities, shippingAddress} = req.body;
+    const customerId  = req.user.id;
+    // Fetch products based on the array of productIds
+    const products = await Product.find({ productId: { $in: productIds } });
 
-    const product = await Product.findById(productId);
-    const customer = await Customer.findById(customerId);
-
-    if (!product || !customer) {
-      return res.status(404).json({ message: 'Product or Customer not found' });
+    if (!products || products.length !== productIds.length) {
+      console.log('Some products were not found');
+      return res.status(404).json({ message: 'Some products were not found' });
     }
 
-    const totalAmount = product.price * quantity;
+    const customer = await Customer.findOne({ id: customerId });
+    if (!customer) {
+      console.log('Customer not found');
+      return res.status(404).json({ message: 'Customer not found' });
+    }
+
+    // Calculate total amount and create order items
+    const items = [];
+    const artistIds = new Set();
+    let totalAmount = 0;
+
+    products.forEach((product, index) => {
+      const quantity = quantities[index];
+
+      if (!quantity || quantity <= 0) {
+        return res.status(400).json({ message: `Invalid quantity for product: ${product._id}` });
+      }
+      artistIds.add(product.artistId);
+      const itemTotal = product.price * quantity;
+      totalAmount += itemTotal;
+
+      items.push({
+        productId: product._id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        quantity,
+      });
+    });
+
+    const uniqueArtistIds = Array.from(artistIds);
 
     const order = new Order({
-      productId,
-      artisanId: product.artistId,
-      name: product.name,
-      description: product.description,
-      price: product.price,
-      quantity,
-      totalAmount,
       customerId,
+      artistIds: uniqueArtistIds,
+      items,
+      totalAmount,
       shippingAddress,
       status: 'pending',
     });
 
     await order.save();
-    customer.purchaseHistory.push(order);
+
+    // Add the order to the customer's purchase history
+    customer.purchaseHistory.push(order._id);
     await customer.save();
 
     res.status(201).json({ message: 'Order placed successfully', order });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: 'Error placing order', error });
   }
 };
@@ -44,10 +72,10 @@ export const createOrder = async (req, res) => {
 // Get Order by ID
 export const getOrderById = async (req, res) => {
   const { orderId } = req.params;
-  const { customerId, artistId } = req.user; // Extracting user details from token
+  const customerId = req.user.id; // Extracting user details from token
 
   try {
-    const order = await Order.findById(orderId).populate('productId customerId artisanId');
+    const order = await Order.findOne({ orderId });
 
     // Check if the order exists
     if (!order) {
@@ -55,12 +83,13 @@ export const getOrderById = async (req, res) => {
     }
 
     // Ensure the order belongs to the requesting customer or artisan
-    if (order.customerId.toString() !== customerId && order.artisanId.toString() !== artistId) {
+    if (order.customerId.toString() !== customerId) {
       return res.status(403).json({ message: 'You are not authorized to view this order' });
     }
 
-    res.json(order);
+    res.status(200).json({message: 'Order fetched successfully', order});
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: 'Error fetching order', error });
   }
 };
@@ -70,7 +99,7 @@ export const getOrdersByCustomer = async (req, res) => {
   const { customerId } = req.user; // Get customer ID from token
 
   try {
-    const orders = await Order.find({ customerId }).populate('productId artisanId');
+    const orders = await Order.find({ customerId }).populate('items.productId artisanId');
 
     if (!orders || orders.length === 0) {
       return res.status(404).json({ message: 'No orders found for this customer' });
@@ -82,12 +111,12 @@ export const getOrdersByCustomer = async (req, res) => {
   }
 };
 
-// Get All Orders for an Artist
+// Get All Orders for an Artisan
 export const getOrdersByArtist = async (req, res) => {
-  const { artistId } = req.user; // Get artist ID from token
+  const { artisanId } = req.user; // Get artisan ID from token
 
   try {
-    const orders = await Order.find({ 'artisanId': artistId }).populate('productId customerId');
+    const orders = await Order.find({ artisanId }).populate('items.productId customerId');
 
     if (!orders || orders.length === 0) {
       return res.status(404).json({ message: 'No orders found for this artist' });
@@ -103,8 +132,9 @@ export const getOrdersByArtist = async (req, res) => {
 export const updateOrderStatus = async (req, res) => {
   const { orderId } = req.params;
   const { status } = req.body;
+
   try {
-    const order = await Order.findById(orderId);
+    const order = await Order.findOne({ orderId });
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
@@ -124,8 +154,9 @@ export const updateOrderStatus = async (req, res) => {
 // Delete Order
 export const deleteOrder = async (req, res) => {
   const { orderId } = req.params;
+
   try {
-    const order = await Order.findById(orderId);
+    const order = await Order.findOne({ orderId });
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }

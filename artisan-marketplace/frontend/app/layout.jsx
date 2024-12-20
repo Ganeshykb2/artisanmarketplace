@@ -7,6 +7,7 @@ import { Palette, Menu, ChevronDown, Search, User, LogOut, LogIn, UserPlus, User
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Input } from '@/components/ui/input';
+import SearchBar  from '@/components/ui/searchBar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -132,8 +133,7 @@ export default function RootLayout({ children }) {
               </div>
               <div className="flex items-center space-x-4 ml-auto">
                 <div className="relative hidden md:block">
-                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input placeholder="Search" className="pl-8 w-[200px]" />
+                  <SearchBar/>
                 </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>

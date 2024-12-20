@@ -15,6 +15,7 @@ import paymentRoutes from './routes/paymentRoutes.js'; // Add payment routes
 import cartRoutes from './routes/cartRoutes.js';
 import { validToken } from './middlewares/validToken.js';
 import contactRoutes from './routes/contactRoutes.js';
+import searchRoutes from './routes/searchRoutes.js';
 
 
 // Load environment variables from .env file
@@ -68,6 +69,7 @@ app.use('/api/events', eventRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/carts', cartRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/search',searchRoutes);
 
 app.get('/api/vaild-token', validToken); // Valid Token
 

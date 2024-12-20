@@ -5,12 +5,12 @@ import { format } from 'date-fns';
 
 const fetchOrders = async () => {
   try {
-    const response = await fetch('customer-dashboard/orders/api/');
+    const response = await fetch('/customer-dashboard/orders/api/');
     if (!response.ok) {
       throw new Error('Failed to fetch orders');
     }
     const data = await response.json();
-    return data.data || [];
+    return data.data.data || [];
   } catch (error) {
     console.error('Error fetching orders:', error);
     return [];
@@ -87,15 +87,12 @@ const CustomerDashboard = () => {
 
   const OrderDetails = ({ order, onBackClick }) => (
     <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-      {/* Order details */}
       <div className="px-4 py-5 sm:px-6">
         <h3 className="text-lg leading-6 font-medium text-gray-900">Order Details</h3>
         <p className="mt-1 max-w-2xl text-sm text-gray-500">Order ID: {order.orderId}</p>
       </div>
-      {/* Detailed sections */}
       <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
         <dl className="sm:divide-y sm:divide-gray-200">
-          {/* Status */}
           <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt className="text-sm font-medium text-gray-500">Status</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
@@ -112,17 +109,14 @@ const CustomerDashboard = () => {
               </span>
             </dd>
           </div>
-          {/* Total Amount */}
           <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt className="text-sm font-medium text-gray-500">Total Amount</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">${order.totalAmount.toFixed(2)}</dd>
           </div>
-          {/* Shipping Address */}
           <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt className="text-sm font-medium text-gray-500">Shipping Address</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{order.shippingAddress}</dd>
           </div>
-          {/* Created & Updated At */}
           <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt className="text-sm font-medium text-gray-500">Created At</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{format(new Date(order.createdAt), 'PPpp')}</dd>
@@ -131,7 +125,6 @@ const CustomerDashboard = () => {
             <dt className="text-sm font-medium text-gray-500">Updated At</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{format(new Date(order.updatedAt), 'PPpp')}</dd>
           </div>
-          {/* Delivered At */}
           {order.deliveredAt && (
             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <dt className="text-sm font-medium text-gray-500">Delivered At</dt>
@@ -142,7 +135,6 @@ const CustomerDashboard = () => {
       </div>
       <div className="px-4 py-5 sm:px-6">
         <h4 className="text-lg leading-6 font-medium text-gray-900">Order Items</h4>
-        {/* Render order items */}
         <div className="mt-4 overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -197,3 +189,4 @@ const CustomerDashboard = () => {
 };
 
 export default CustomerDashboard;
+

@@ -95,28 +95,29 @@ export const getOrderById = async (req, res) => {
   }
 };
 
+
 // Get All Orders for a Customer
+
 export const getOrdersByCustomer = async (req, res) => {
-  const customerId = req.user.id;
   try {
-    // First try to get orders without population
-    const orders = await Order.find({ customerId });
-    
-    // Then populate only if orders exist
-    if (orders && orders.length > 0) {
-      const populatedOrders = await Order.find({ customerId })
-        .populate('items.productId');
-      
-      return res.json(populatedOrders);
-    }
-    
-    if (!orders || orders.length === 0) {
-      return res.status(404).json({ message: 'No orders found for this customer' });
+    const customerId = req.user.id; // Assuming the user ID is provided by authentication middleware
+
+    if (!customerId) {
+      return res.status(400).json({ success: false, message: 'Customer ID is required' });
     }
 
+    // Fetch orders for the specific customer
+    const orders = await Order.find({ customerId })
+
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ success: false, message: 'No orders found for this customer' });
+    }
+
+    // Return the populated orders
+    res.status(200).json({ success: true, data: orders });
   } catch (error) {
-    console.error('Error details:', error);
-    res.status(500).json({ message: 'Error fetching customer orders', error: error.message });
+    console.error('Error fetching customer orders:', error);
+    res.status(500).json({ success: false, message: 'Internal server error', error: error.message });
   }
 };
 

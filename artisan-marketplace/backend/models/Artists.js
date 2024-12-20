@@ -98,10 +98,6 @@ const ArtistsSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
-  profileViews: {
-    type: Number,
-    default: 0, // Start with 0 views
-  },
   verified:{
     type:Boolean,
     default:false

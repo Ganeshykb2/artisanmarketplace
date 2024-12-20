@@ -1,14 +1,8 @@
 import Event from '../models/Events.js';
-import Artist from '../models/Artists.js';
-import Customer from '../models/Customers.js';
-
-
 export const createEvent = async (req, res) => {
   try {
     const { name, eventType, dateOfEvent, location,images, description } = req.body;
     // const artistId = req.user.id; // Get artistId from the authenticated user
-
-   
     // Get the artistId from the authenticated user (assuming it's attached to the request)
     const artistId = req.user.id;
 
@@ -54,7 +48,14 @@ export const getEvents = async  (req, res) => {
     res.status(500).json({ message: 'Error fetching event', error });
 }
 };
-
+export const getAllEvents = async (req, res) => {
+  try {
+    const events = await Event.find({});
+    res.status(200).json(events);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 export const getEventById = async (req, res) => {
   const { eventId } = req.params;
@@ -68,6 +69,52 @@ export const getEventById = async (req, res) => {
     res.status(500).json({ message: 'Error fetching event details', error });
   }
 };
+
+export const registerForEvent = async (req, res) => {
+  const { eventId } = req.params;  // Get event ID from request params
+  console.log(eventId);
+  const user = req.user;      // Get user ID from the decoded token
+
+  try {
+    const event = await Event.findOne({eventId: eventId}); // Assuming MongoDB _id is used
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    // Register the user for the event
+    if(req.user?.artistId){
+      const alreadyRegistered = event.participants?.find(participant => 
+        participant.artistId?.toString() === req.user?.artistId?.toString()
+      );
+      if (alreadyRegistered) {
+        return res.status(400).json({ message: 'User already registered for this event' });
+      }
+      event.participants.push({
+        artistId: req.user?.artistId,
+        name: req.user?.name,
+        type: 'Artist',
+      });
+    }else{
+      const alreadyRegistered = event.participants?.find(participant => 
+        participant.customerId?.toString() === req.user?.customerId?.toString()
+      );
+      if (alreadyRegistered) {
+        return res.status(400).json({ message: 'User already registered for this event' });
+      }
+      event.participants.push({
+        artistId: req.user?.customerId,
+        name: req.user?.name,
+        type: 'Customer',
+      });
+    }
+    await event.save(); // Save the event with the new participant
+
+    return res.status(200).json({ message: 'Registered successfully for the event', event });
+  } catch (error) {
+    console.error('Registration error:', error);
+    return res.status(500).json({ message: 'Error registering for event', error });
+  }
+};
+
 export const getUpcomingEvents = async (req, res) => {
   try {
     const currentDate = new Date();
@@ -127,34 +174,6 @@ export const deleteEvent = async (req, res) => {
     res.status(200).json({ message: 'Event deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Error deleting event', error });
-  }
-};
-
-export const registerForEvent = async (req, res) => {
-  const { eventId } = req.params;
-  const userId = req.user.id;
-  try {
-    const event = await Event.findOne({ eventId });
-    if (!event) {
-      return res.status(404).json({ message: 'Event not found' });
-    }
-
-    // Check if user has already registered
-    const alreadyRegistered = event.participants.some(participant => participant.participantId.toString() === userId.toString());
-    if (alreadyRegistered) {
-      return res.status(400).json({ message: 'User already registered for this event' });
-    }
-
-    // Register user for event
-    event.participants.push({
-      participantId: userId,
-      type: req.user.artistId ? 'Artists' : 'Users', // If artist, it's an artisan, otherwise customer
-    });
-    await event.save();
-
-    res.status(200).json({ message: 'Registered successfully for the event', event });
-  } catch (error) {
-    res.status(500).json({ message: 'Error registering for event', error });
   }
 };
 

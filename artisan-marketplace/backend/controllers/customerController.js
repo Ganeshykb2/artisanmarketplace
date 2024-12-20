@@ -173,12 +173,15 @@ export const getEventByName = async (req, res) => {
   }
 };
 
+export const joinEvent = async (req, res) => {
+  const { customerId, eventId } = req.body;
 
-// Join event by ID
-export const joinEventById = async (req, res) => {
   try {
-    const eventId = req.params.eventId;
-    const customerId = req.user.id; // Use custom UUID field 'id'
+    // Find the customer by ID
+    const customer = await Customers.findById(customerId);
+    if (!customer) {
+      return res.status(404).json({ message: 'Customer not found' });
+    }
 
     // Find the event by ID
     const event = await Events.findById(eventId);
@@ -186,47 +189,18 @@ export const joinEventById = async (req, res) => {
       return res.status(404).json({ message: 'Event not found' });
     }
 
-    // Check if customer has already joined
-    if (event.participants.includes(customerId)) {
-      return res.status(400).json({ message: 'You are already joined in this event' });
+    // Check if the customer has already joined the event
+    if (customer.joinedEvents.includes(eventId)) {
+      return res.status(400).json({ message: 'Customer already joined the event' });
     }
 
-    // Add the customer to the event participants
-    event.participants.push(customerId);
-    await event.save();
+    // Add the event to the customer's joined events
+    customer.joinedEvents.push(eventId);
+    await customer.save();
 
-    res.json({ message: 'Successfully joined the event', event });
+    res.status(200).json({ message: 'Event joined successfully', customer });
   } catch (error) {
-    console.error('Error joining event by ID:', error);
-    res.status(500).json({ message: 'Error joining event', error: error.toString() });
-  }
-};
-
-// Join event by name
-export const joinEventByName = async (req, res) => {
-  try {
-    const eventName = req.params.eventName;
-    const customerId = req.user.id; // Use custom UUID field 'id'
-
-    // Find the event by name (case insensitive search)
-    const event = await Events.findOne({ name: { $regex: new RegExp(eventName, 'i') } });
-    if (!event) {
-      return res.status(404).json({ message: 'Event not found' });
-    }
-
-    // Check if customer has already joined
-    if (event.participants.includes(customerId)) {
-      return res.status(400).json({ message: 'You are already joined in this event' });
-    }
-
-    // Add the customer to the event participants
-    event.participants.push(customerId);
-    await event.save();
-
-    res.json({ message: 'Successfully joined the event', event });
-  } catch (error) {
-    console.error('Error joining event by name:', error);
-    res.status(500).json({ message: 'Error joining event', error: error.toString() });
+    res.status(500).json({ message: 'Server error', error });
   }
 };
 

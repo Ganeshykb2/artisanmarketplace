@@ -1,133 +1,65 @@
 'use client'
+import React from 'react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { Package, User } from 'lucide-react'
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar"
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, LineChart, Line } from 'recharts'
+export default function CustomerDashboardLayout({ children }) {
+  const pathname = usePathname()
 
-const salesData = [
-  { month: 'Jan', sales: 4000 },
-  { month: 'Feb', sales: 3000 },
-  { month: 'Mar', sales: 5000 },
-  { month: 'Apr', sales: 4500 },
-  { month: 'May', sales: 6000 },
-  { month: 'Jun', sales: 5500 },
-]
-
-const productData = [
-  { name: 'Sarees', value: 400 },
-  { name: 'Scarves', value: 300 },
-  { name: 'Shawls', value: 200 },
-  { name: 'Stoles', value: 100 },
-]
-
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042']
-
-const viewsData = [
-  { day: 'Mon', views: 1000 },
-  { day: 'Tue', views: 1200 },
-  { day: 'Wed', views: 1500 },
-  { day: 'Thu', views: 1300 },
-  { day: 'Fri', views: 1400 },
-  { day: 'Sat', views: 1600 },
-  { day: 'Sun', views: 1800 },
-]
-
-export default function CustomerDashboard() {
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8">Artisan Dashboard</h1>
-      <div className="flex flex-row items-center justify-left">
-        <img src="/path/to/artist/photo.jpg" alt="Artist Photo" className="w-24 h-24 rounded-full mb-4" />
-        <div className="px-5">
-        <h2 className="text-2xl font-bold mb-2"> Jane Doe</h2>
-        <p className="text-lg"> Jane Doe Artistry</p>
+    <SidebarProvider>
+      <div className="flex h-screen">
+        <Sidebar>
+          <SidebarHeader>
+            <h2 className="text-xl font-bold px-4 py-2">Customer Dashboard</h2>
+          </SidebarHeader>
+          <SidebarContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={pathname === '/customer-dashboard/orders'}>
+                  <Link href="/customer-dashboard/orders" className="flex items-center">
+                    <Package className="mr-2 h-4 w-4" />
+                    <span>Orders</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={pathname === '/customer-dashboard/profile'}>
+                  <Link href="/customer-dashboard/profile" className="flex items-center">
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarContent>
+        </Sidebar>
+        <div className="flex-1 overflow-auto">
+          <header className="bg-white shadow">
+            <div className="flex items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+              <h1 className="text-2xl font-semibold text-gray-900">
+                {pathname === '/customer-dashboard/orders' ? 'Orders' : 'Profile'}
+              </h1>
+              <SidebarTrigger />
+            </div>
+          </header>
+          <main className="p-4 sm:p-6 lg:p-8">
+            {children}
+          </main>
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Monthly Sales</CardTitle>
-            <CardDescription>Your sales performance over the last 6 months</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={salesData}>
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="sales" fill="#8884d8" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Product Distribution</CardTitle>
-            <CardDescription>Breakdown of your product sales</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={productData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {productData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Daily Profile Views</CardTitle>
-            <CardDescription>Number of views your profile received this week</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={viewsData}>
-                <XAxis dataKey="day" />
-                <YAxis />
-                <Tooltip />
-                <Line type="monotone" dataKey="views" stroke="#8884d8" />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Key Metrics</CardTitle>
-            <CardDescription>Your performance at a glance</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-center">
-                <h3 className="text-2xl font-bold">₹24,500</h3>
-                <p className="text-sm text-muted-foreground">Total Revenue</p>
-              </div>
-              <div className="text-center">
-                <h3 className="text-2xl font-bold">127</h3>
-                <p className="text-sm text-muted-foreground">Orders Completed</p>
-              </div>
-              <div className="text-center">
-                <h3 className="text-2xl font-bold">4.8</h3>
-                <p className="text-sm text-muted-foreground">Average Rating</p>
-              </div>
-              <div className="text-center">
-                <h3 className="text-2xl font-bold">1,234</h3>
-                <p className="text-sm text-muted-foreground">Profile Views</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+    </SidebarProvider>
   )
 }
+

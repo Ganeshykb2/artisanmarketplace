@@ -36,14 +36,18 @@ const EventsSchema = new mongoose.Schema({
   },
   artistId: { 
     type: String,
+    ref : "Artists",
     required: true,
   },
   participants: {
     type: [{
-      participantId: { 
-        type: String, 
-        required: true, 
-        refPath: 'participants.type' // Dynamic reference to either 'Artists' or 'Users'
+      customerId: { 
+        type: String,  
+        refPath: 'Customers' // Dynamic reference to either 'Artists' or 'Users'
+      },
+      artistId: { 
+        type: String,  
+        refPath: 'Artists' // Dynamic reference to either 'Artists' or 'Users'
       },
       name: {
         type: String,
@@ -51,7 +55,7 @@ const EventsSchema = new mongoose.Schema({
       },
       type: { 
         type: String, 
-        enum: ["Artists", "Users"], 
+        enum: ["Artist", "Customer"], 
         required: true 
       },
     }],

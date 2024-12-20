@@ -2,6 +2,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import Artists from '../models/Artists.js';  
+import Events from '../models/Events.js';
 
 // Create new artist (open)
 export const createArtist = async (req, res) => {
@@ -164,7 +165,36 @@ export const loginArtist = async (req, res) => {
     });
   }
 };
+export const joinEvent = async (req, res) => {
+  const { eventId } = req.body;
 
+  try {
+    // Find the artist by ID
+    const artist = await Artists.findById(req.user.id);
+    if (!artist) {
+      return res.status(404).json({ message: 'Artist not found' });
+    }
+
+    // Find the event by ID
+    const event = await Events.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+
+    // Check if the artist has already joined the event
+    if (artist.joinedEvents.includes(eventId)) {
+      return res.status(400).json({ message: 'Artist already joined the event' });
+    }
+
+    // Add the event to the artist's joined events
+    artist.joinedEvents.push(eventId);
+    await artist.save();
+
+    res.status(200).json({ message: 'Event joined successfully', artist });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
 
 
 // http://localhost:5000/api/artists/register POST

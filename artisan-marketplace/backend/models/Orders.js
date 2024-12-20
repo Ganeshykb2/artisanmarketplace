@@ -32,11 +32,11 @@ const OrdersSchema = new mongoose.Schema({
     required: true,
     default: uuidv4,
   },
-  artisanId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Artisans',
+  artistIds: [{
+    type: String,
+    ref: 'Artists',
     required: true,
-  },
+  }],
   customerId: {
     type: String,
     ref: 'Customers',
@@ -55,7 +55,7 @@ const OrdersSchema = new mongoose.Schema({
   paymentId: {
     type: String,
     ref: 'Payments',
-    required: true,
+    // required: true,
   },
   shippingAddress: {
     type: String,

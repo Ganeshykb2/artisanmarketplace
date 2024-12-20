@@ -10,6 +10,7 @@ import {
 import { checkAuth } from '../middlewares/authMiddleware.js'; // Authentication middleware
 const router = express.Router();
 // Order routes
+router.get('/orders', checkAuth, getOrdersByCustomer);
 router.post('/create', checkAuth, createOrder); // Protected route for creating an order
 router.get('/:orderId', checkAuth, getOrderById); // Protected route to get order by ID
 router.get('/customer/orders', checkAuth, getOrdersByCustomer); // Protected route to get orders of a customer

@@ -47,11 +47,7 @@ const AdminLayout = ({ children }) => {
       icon: <ShoppingOutlined />,
       label: <Link href="/admin-dashboard/allartists">Artists</Link>,
     },
-    {
-      key: 'orders',
-      icon: <OrderedListOutlined />,
-      label: <Link href="/admin-dashboard/orders">Orders</Link>,
-    },
+  
     {
       key: 'events',
       icon: <CalendarOutlined />,

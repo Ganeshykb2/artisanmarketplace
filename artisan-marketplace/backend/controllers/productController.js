@@ -1,7 +1,6 @@
 // backend/controllers/productController.js
 import Product from '../models/Products.js';
-
-
+import Artists from '../models/Artists.js';
 export const createProduct = async (req, res) => {
   try {
     // Extract product data from the request body
@@ -34,49 +33,6 @@ export const createProduct = async (req, res) => {
     res.status(500).json({ message: 'Error creating product', error: error.message });
   }
 };
-
-
- /*
- test payload :{
-  "name": "Handmade Ceramic Mug",
-  "description": "A beautifully crafted handmade ceramic mug perfect for your morning coffee.",
-  "price": 15.99,
-  "quantity": 50,
-  "images": [
-    "https://example.com/images/mug1.jpg",
-    "https://example.com/images/mug2.jpg"
-  ],
-  "category": "Ceramics",
-  "status": "available",
-  "discount": 10
-}
-result: {
-    "message": "Product created successfully",
-    "product": {
-        "name": "Handmade Ceramic Mug",
-        "description": "A beautifully crafted handmade ceramic mug perfect for your morning coffee.",
-        "price": 15.99,
-        "images": [
-            "https://example.com/images/mug1.jpg",
-            "https://example.com/images/mug2.jpg"
-        ],
-        "quantity": 50,
-        "category": "Ceramics",
-        "status": "available",
-        "reviews": [],
-        "averageRating": 0,
-        "salesCount": 0,
-        "discount": 10,
-        "artistId": "artistidhgmhdfvhjvn",
-        "_id": "6751a795622b86f0fd50f2c9",
-        "productId": "ded6d4c9-1bb3-453a-85a7-0d8583600cb5",
-        "createdAt": "2024-12-05T13:16:05.080Z",
-        "updatedAt": "2024-12-05T13:16:05.083Z",
-        "__v": 0
-    }
-}
-*/
-
 
 export const updateProduct = async (req, res) => {
   const { id } = req.params;
@@ -126,10 +82,63 @@ export const getFeaturedProducts = async (req, res) => {
     res.status(500).json({ message: 'Error fetching featured products', error: error.message });
   }
 };
+export const getArtistsWithProducts = async (req, res) => {
+  try {
+    // Fetch only specific artist fields
+    const artists = await Artists.find({}, 'id name verified').lean();
 
+    // Check if artists is null or undefined
+    if (!artists || artists.length === 0) {
+      return res.status(404).json({ message: "No artists found" });
+    }
 
+    // Fetch products for each artist and attach them
+    const artistsWithProducts = await Promise.all(
+      artists.map(async (artist) => {
+        // Ensure artist.id exists before querying
+        if (!artist.id) {
+          console.warn('Artist missing ID:', artist);
+          return { ...artist, products: [] };
+        }
 
-export const getArtistProduct = async (req, res) => {
+        try {
+          const products = await Product.find({ 
+            artistId: artist.id 
+          }, 'productId name price quantity description category status').lean(); // Fetch comprehensive product details
+
+          return { 
+            ...artist, 
+            products: products || [] 
+          };
+        } catch (productFetchError) {
+          console.error(`Error fetching products for artist ${artist.id}:`, productFetchError);
+          return { 
+            ...artist, 
+            products: [],
+            productFetchError: productFetchError.message 
+          };
+        }
+      })
+    );
+
+    // Ensure we always return a valid response
+    res.status(200).json({
+      message: "Artists and products fetched successfully",
+      data: artistsWithProducts,
+      total: artistsWithProducts.length
+    });
+
+  } catch (error) {
+    console.error("Error in getArtistsWithProducts:", error);
+    res.status(500).json({
+      message: "Error fetching artists and products",
+      error: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
+  }
+};
+
+export const getArtistProducts = async (req, res) => {
   try {
     // Get the artistId from the authenticated user (assuming it's attached to the request)
     const {artistId} = req.params;

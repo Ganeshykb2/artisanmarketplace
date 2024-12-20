@@ -1,6 +1,6 @@
 //./routes/artistRoutes.js
 import express from 'express';
-import { createArtist, getAllArtists,getArtistsDetails, updateArtist, deleteArtist, loginArtist, getArtistOfTheMonth} from '../controllers/artistController.js';
+import { createArtist, getAllArtists,getArtistsDetails, updateArtist, deleteArtist, loginArtist, getArtistOfTheMonth, joinEvent,} from '../controllers/artistController.js';
 import artistAuth from '../middlewares/artistAuth.js'; // Import Artist Authorization middleware
 
 const router = express.Router();
@@ -20,7 +20,7 @@ router.put('/update', artistAuth, updateArtist );
 router.get('/getartistdetails',artistAuth,getArtistsDetails)
 
 // Delete artist account (only accessible by the artist after login)
-router.delete('/:id', artistAuth, async (req, res) => {
+router.delete('/delete/:id', artistAuth, async (req, res) => {
   const artistId = req.params.id;
 
   // Ensure the logged-in artist can only delete their own account
@@ -30,4 +30,5 @@ router.delete('/:id', artistAuth, async (req, res) => {
   deleteArtist(req, res);  // Proceed with the delete
 });
 router.get('/artist-of-the-month', getArtistOfTheMonth);
+router.post('/join-event', artistAuth, joinEvent);
 export default router;

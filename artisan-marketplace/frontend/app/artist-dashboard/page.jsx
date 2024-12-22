@@ -1,48 +1,128 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, LineChart, Line } from 'recharts'
-
-const salesData = [
-  { month: 'Jan', sales: 4000 },
-  { month: 'Feb', sales: 3000 },
-  { month: 'Mar', sales: 5000 },
-  { month: 'Apr', sales: 4500 },
-  { month: 'May', sales: 6000 },
-  { month: 'Jun', sales: 5500 },
-]
-
-const productData = [
-  { name: 'Sarees', value: 400 },
-  { name: 'Scarves', value: 300 },
-  { name: 'Shawls', value: 200 },
-  { name: 'Stoles', value: 100 },
-]
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell } from 'recharts'
+import { MapPin } from 'lucide-react'
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042']
 
-const viewsData = [
-  { day: 'Mon', views: 1000 },
-  { day: 'Tue', views: 1200 },
-  { day: 'Wed', views: 1500 },
-  { day: 'Thu', views: 1300 },
-  { day: 'Fri', views: 1400 },
-  { day: 'Sat', views: 1600 },
-  { day: 'Sun', views: 1800 },
-]
-
 export default function ArtisanDashboard() {
+  const [dashboardData, setDashboardData] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const response = await fetch('artist-dashboard/api')
+        const data = await response.json()
+        
+        if (!response.ok) {
+          throw new Error(data.message || 'Failed to fetch dashboard data')
+        }
+        
+        // Ensure data.data exists and has the expected structure
+        if (!data?.data) {
+          throw new Error('Invalid data structure received from API')
+        }
+        
+        setDashboardData(data.data)
+      } catch (err) {
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchDashboardData()
+  }, [])
+
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>
+  }
+
+  if (error) {
+    return <div className="flex items-center justify-center min-h-screen text-red-500">{error}</div>
+  }
+
+  if (!dashboardData || !dashboardData.artist) return null
+
+  const { artist, salesData = [], productData = [], metrics = {} } = dashboardData
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8">Artisan Dashboard</h1>
-      <div className="flex flex-row items-center justify-left">
-        <img src="/path/to/artist/photo.jpg" alt="Artist Photo" className="w-24 h-24 rounded-full mb-4" />
-        <div className="px-5">
-        <h2 className="text-2xl font-bold mb-2"> Jane Doe</h2>
-        <p className="text-lg"> Jane Doe Artistry</p>
+      <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
+          <div className="flex items-center mb-4 md:mb-0">
+            <img 
+              src={artist?.profileImage || "/default-profile.jpg"} 
+              alt={`${artist?.name || 'Artist'}'s Photo`} 
+              className="w-24 h-24 rounded-full object-cover border-4 border-gray-100"
+            />
+            <div className="ml-6">
+              <h1 className="text-3xl font-bold text-gray-900">{artist?.name || 'Unknown Artist'}</h1>
+              <p className="text-xl text-gray-600">{artist?.businessName || 'Business Name Not Available'}</p>
+              {artist?.city && artist?.state && (
+                <div className="flex items-center mt-2 text-gray-500">
+                  <MapPin className="w-4 h-4 mr-1" />
+                  <span>{artist.city}, {artist.state}</span>
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="bg-gray-50 rounded-lg p-4">
+            <div className="text-sm text-gray-600 mb-1">Specializations</div>
+            <div className="flex flex-wrap gap-2">
+              {(artist?.specialization || []).map((spec, index) => (
+                <span 
+                  key={index}
+                  className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                >
+                  {spec}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <Card className="bg-gradient-to-br from-blue-50 to-blue-100">
+          <CardContent className="pt-6">
+            <div className="text-center">
+              <h3 className="text-3xl font-bold text-blue-900">
+                ₹{(metrics?.totalRevenue || 0).toLocaleString()}
+              </h3>
+              <p className="text-blue-700 font-medium">Total Revenue</p>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-gradient-to-br from-green-50 to-green-100">
+          <CardContent className="pt-6">
+            <div className="text-center">
+              <h3 className="text-3xl font-bold text-green-900">
+                {metrics?.completedOrders || 0}
+              </h3>
+              <p className="text-green-700 font-medium">Orders Completed</p>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100">
+          <CardContent className="pt-6">
+            <div className="text-center">
+              <h3 className="text-3xl font-bold text-yellow-900">
+                {(metrics?.rating || 0).toFixed(1)}
+              </h3>
+              <p className="text-yellow-700 font-medium">Average Rating</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <Card>
           <CardHeader>
             <CardTitle>Monthly Sales</CardTitle>
@@ -54,15 +134,16 @@ export default function ArtisanDashboard() {
                 <XAxis dataKey="month" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="sales" fill="#8884d8" />
+                <Bar dataKey="sales" fill="#4F46E5" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
+
         <Card>
           <CardHeader>
             <CardTitle>Product Distribution</CardTitle>
-            <CardDescription>Breakdown of your product sales</CardDescription>
+            <CardDescription>Breakdown of your product sales by category</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -83,48 +164,6 @@ export default function ArtisanDashboard() {
                 <Tooltip />
               </PieChart>
             </ResponsiveContainer>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Daily Profile Views</CardTitle>
-            <CardDescription>Number of views your profile received this week</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={viewsData}>
-                <XAxis dataKey="day" />
-                <YAxis />
-                <Tooltip />
-                <Line type="monotone" dataKey="views" stroke="#8884d8" />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Key Metrics</CardTitle>
-            <CardDescription>Your performance at a glance</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-center">
-                <h3 className="text-2xl font-bold">₹24,500</h3>
-                <p className="text-sm text-muted-foreground">Total Revenue</p>
-              </div>
-              <div className="text-center">
-                <h3 className="text-2xl font-bold">127</h3>
-                <p className="text-sm text-muted-foreground">Orders Completed</p>
-              </div>
-              <div className="text-center">
-                <h3 className="text-2xl font-bold">4.8</h3>
-                <p className="text-sm text-muted-foreground">Average Rating</p>
-              </div>
-              <div className="text-center">
-                <h3 className="text-2xl font-bold">1,234</h3>
-                <p className="text-sm text-muted-foreground">Profile Views</p>
-              </div>
-            </div>
           </CardContent>
         </Card>
       </div>

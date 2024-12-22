@@ -126,7 +126,8 @@ export const getOrdersByArtist = async (req, res) => {
   const { artisanId } = req.user; // Get artisan ID from token
 
   try {
-    const orders = await Order.find({ artisanId }).populate('items.productId customerId');
+const orders = await Order.find({ artisanId });
+
 
     if (!orders || orders.length === 0) {
       return res.status(404).json({ message: 'No orders found for this artist' });
@@ -135,6 +136,7 @@ export const getOrdersByArtist = async (req, res) => {
     res.json(orders);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching artist orders', error });
+    console.log(error);
   }
 };
 

@@ -1,8 +1,8 @@
-//events/page.jsx
 'use client';
 
 import { useState, useEffect } from 'react';
 import { Calendar, MapPin, Search } from 'lucide-react';
+import {  usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,14 +10,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import Image from 'next/image';
 
 export default function EventsAndExhibitions() {
+  const pathname = usePathname();
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [eventType, setEventType] = useState('all');
   const [events, setEvents] = useState([]);
-  const [userId, setUserId] = useState(null); // Assume you get the user ID from cookies or context
 
+  // Fetch events data
   useEffect(() => {
     async function fetchEvents() {
-      const response = await fetch('events/api/'); // Adjust the API path if needed
+      const response = await fetch('/events/api/');
       const data = await response.json();
       if (data.data) {
         setEvents(data.data);
@@ -25,6 +27,22 @@ export default function EventsAndExhibitions() {
     }
     fetchEvents();
   }, []);
+
+  // Handle URL parameters
+  useEffect(() => {
+    const pathParts = pathname.split('/');
+    const filteredParts = pathParts.filter(part => part && part !== 'events');
+    if (filteredParts.length > 0) {
+      const decodedSearchTerm = decodeURIComponent(filteredParts[0]);
+      setSearchTerm(decodedSearchTerm);
+    }
+  }, [pathname]);
+
+  // Modified search handler to update URL
+  const handleSearch = (e) => {
+    const newSearchTerm = e.target.value;
+    setSearchTerm(newSearchTerm);
+  };
 
   const filteredEvents = events.filter(event =>
     event.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
@@ -42,14 +60,6 @@ export default function EventsAndExhibitions() {
       });
   
       const data = await response.json();
-  
-      // if (response.status === 401) {
-      //   // Specific handling for authentication errors
-      //   alert('Please log in to register for events');
-      //   // Optionally redirect to login page
-      //   window.location.href = '/login';
-      //   return;
-      // }
   
       if (!response.ok) {
         throw new Error(data.message || 'Failed to register for event');
@@ -72,7 +82,7 @@ export default function EventsAndExhibitions() {
             placeholder="Search events"
             className="pl-8"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={handleSearch}
           />
         </div>
         <Select value={eventType} onValueChange={setEventType}>
@@ -91,7 +101,7 @@ export default function EventsAndExhibitions() {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filteredEvents.map((event) => (
-          <Card key={event.eventId} className="flex flex-row ">
+          <Card key={event.eventId} className="flex flex-row">
             <div className="w-1/1">
               {event.images && event.images.length > 0 ? (
                 <Image
@@ -125,7 +135,12 @@ export default function EventsAndExhibitions() {
                 </CardContent>
               </div>
               <CardFooter>
-                <Button className="w-full mt-4" onClick={() => handleRegister(event.eventId)}>Register for Event</Button>
+                <Button 
+                  className="w-full mt-4" 
+                  onClick={() => handleRegister(event.eventId)}
+                >
+                  Register for Event
+                </Button>
               </CardFooter>
             </div>
           </Card>

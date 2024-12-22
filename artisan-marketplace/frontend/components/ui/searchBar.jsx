@@ -18,14 +18,16 @@ const SearchBar = () => {
   };
 
   const calculateRelevanceScore = (item, searchQuery) => {
+    if (!item || !searchQuery) return 0;
+    
     const query = searchQuery.toLowerCase();
     let score = 0;
     
     // Product specific scoring
     if (item.type === 'product') {
-      const name = item.name.toLowerCase();
-      const description = item.description.toLowerCase();
-      const category = item.category.toLowerCase();
+      const name = (item.name || '').toLowerCase();
+      const description = (item.description || '').toLowerCase();
+      const category = (item.category || '').toLowerCase();
       
       if (name === query) score += 10;
       if (name.startsWith(query)) score += 8;
@@ -38,9 +40,9 @@ const SearchBar = () => {
     
     // Artist specific scoring
     if (item.type === 'artist') {
-      const name = item.name.toLowerCase();
+      const name = (item.name || '').toLowerCase();
       const business = (item.businessName || '').toLowerCase();
-      const about = item.AboutHimself.toLowerCase();
+      const about = (item.AboutHimself || '').toLowerCase();
       
       if (name === query) score += 10;
       if (business === query) score += 9;
@@ -55,10 +57,10 @@ const SearchBar = () => {
     
     // Event specific scoring
     if (item.type === 'event') {
-      const name = item.name.toLowerCase();
-      const description = item.description.toLowerCase();
-      const eventType = item.eventType.toLowerCase();
-      const location = item.location.toLowerCase();
+      const name = (item.name || '').toLowerCase();
+      const description = (item.description || '').toLowerCase();
+      const eventType = (item.eventType || '').toLowerCase();
+      const location = (item.location || '').toLowerCase();
       
       if (name === query) score += 10;
       if (name.startsWith(query)) score += 8;
@@ -68,8 +70,10 @@ const SearchBar = () => {
       if (description.includes(query)) score += 3;
       
       // Boost score for upcoming events
-      const eventDate = new Date(item.dateOfEvent);
-      if (eventDate > new Date()) score += 2;
+      if (item.dateOfEvent) {
+        const eventDate = new Date(item.dateOfEvent);
+        if (eventDate > new Date()) score += 2;
+      }
     }
     
     return score;
@@ -92,6 +96,7 @@ const SearchBar = () => {
       
       // Score and sort results
       const scoredResults = data
+        .filter(item => item && item.type) // Filter out any invalid items
         .map(item => ({
           ...item,
           score: calculateRelevanceScore(item, searchQuery)
@@ -102,6 +107,7 @@ const SearchBar = () => {
       setResults(scoredResults);
     } catch (err) {
       setError('Failed to fetch search results');
+      console.error('Search error:', err);
     } finally {
       setIsLoading(false);
     }
@@ -115,16 +121,32 @@ const SearchBar = () => {
     return () => clearTimeout(debounceTimer);
   }, [query]);
 
+  const getItemImage = (result) => {
+    if (!result) return null;
+    
+    switch (result.type) {
+      case 'artist':
+        return result.profileImage || null;
+      case 'product':
+      case 'event':
+        return result.images?.[0] || null;
+      default:
+        return null;
+    }
+  };
+
   const renderResultContent = (result) => {
+    if (!result) return null;
+
     switch (result.type) {
       case 'product':
         return (
           <>
             <div className="text-sm font-medium text-gray-900">
-              {getHighlightedText(result.name, query)}
+              {getHighlightedText(result.name || '', query)}
             </div>
             <div className="text-xs text-gray-500 mt-1">
-              {result.category} · ${result.price} 
+              {result.category || 'Uncategorized'} · ${result.price || '0'} 
               {result.averageRating > 0 && ` · ★${result.averageRating.toFixed(1)}`}
             </div>
           </>
@@ -133,15 +155,10 @@ const SearchBar = () => {
         return (
           <>
             <div className="text-sm font-medium text-gray-900">
-              {getHighlightedText(result.name, query)}
-              {result.verified && (
-                <span className="ml-2 px-1.5 py-0.5 text-xs bg-blue-100 text-blue-800 rounded">
-                  Verified
-                </span>
-              )}
+              {getHighlightedText(result.name || '', query)}
             </div>
             <div className="text-xs text-gray-500 mt-1">
-              {result.businessName} 
+              {result.businessName || ''} 
               {result.rating > 0 && ` · ★${result.rating.toFixed(1)}`}
             </div>
           </>
@@ -150,10 +167,10 @@ const SearchBar = () => {
         return (
           <>
             <div className="text-sm font-medium text-gray-900">
-              {getHighlightedText(result.name, query)}
+              {getHighlightedText(result.name || '', query)}
             </div>
             <div className="text-xs text-gray-500 mt-1">
-              {result.eventType} · {new Date(result.dateOfEvent).toLocaleDateString()} · {result.location}
+              {result.eventType || 'Event'} · {result.dateOfEvent ? new Date(result.dateOfEvent).toLocaleDateString() : 'TBD'} · {result.location || 'Location TBD'}
             </div>
           </>
         );
@@ -204,18 +221,18 @@ const SearchBar = () => {
               className="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
               onClick={() => {
                 // Handle navigation based on type
-                const path = result.type === 'product' ? `/products/${result.productId}` :
-                           result.type === 'artist' ? `/artists/${result.id}` :
-                           `/events/${result.eventId}`;
-                console.log(`Navigating to: ${path}`);
+                const path = result.type === 'product' ? `/exploreproducts/${result.name}` :
+                           result.type === 'artist' ? `/artisans/${result.name}` :
+                           `/events/${result.name}`;
+                window.location.href = path;
                 setShowDropdown(false);
               }}
             >
               <div className="flex items-start">
-                {result.images && result.images[0] && (
+                {getItemImage(result) && (
                   <div className="w-10 h-10 rounded-md overflow-hidden mr-3 flex-shrink-0">
                     <img 
-                      src={result.images[0]} 
+                      src={getItemImage(result)} 
                       alt="" 
                       className="w-full h-full object-cover"
                     />

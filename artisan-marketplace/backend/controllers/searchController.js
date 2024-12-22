@@ -21,9 +21,9 @@ export const search = async(req, res) => {
     // Search products
     const products = await Products.find({
       $or: [
-        { name: searchRegex },
-        { description: searchRegex },
-        { category: searchRegex }
+        { name: { $regex: `.*${query}.*`, $options: 'i' } },
+        { description: { $regex: `.*${query}.*`, $options: 'i' } },
+        { category: { $regex: `.*${query}.*`, $options: 'i' } }
       ],
       status: 'available' // Only show available products
     })
@@ -33,12 +33,11 @@ export const search = async(req, res) => {
     // Search artists
     const artists = await Artists.find({
       $or: [
-        { name: searchRegex },
-        { businessName: searchRegex },
-        { AboutHimself: searchRegex },
-        { specialization: searchRegex }
-      ],
-      verified: true // Only show verified artists
+        { name: { $regex: `.*${query}.*`, $options: 'i' }  },
+        { businessName: { $regex: `.*${query}.*`, $options: 'i' }  },
+        { AboutHimself: { $regex: `.*${query}.*`, $options: 'i' }  },
+        { specialization: { $regex: `.*${query}.*`, $options: 'i' }  }
+      ]
     })
     .select('id name businessName specialization rating profileImage verified')
     .limit(10);
@@ -46,10 +45,10 @@ export const search = async(req, res) => {
     // Search events
     const events = await Events.find({
       $or: [
-        { name: searchRegex },
-        { description: searchRegex },
-        { eventType: searchRegex },
-        { location: searchRegex }
+        { name: { $regex: `.*${query}.*`, $options: 'i' }  },
+        { description: { $regex: `.*${query}.*`, $options: 'i' }  },
+        { eventType: { $regex: `.*${query}.*`, $options: 'i' } },
+        { location: { $regex: `.*${query}.*`, $options: 'i' }  }
       ],
       dateOfEvent: { $gte: new Date() } // Only show upcoming events
     })

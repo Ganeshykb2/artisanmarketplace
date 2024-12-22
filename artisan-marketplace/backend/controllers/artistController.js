@@ -3,6 +3,8 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import Artists from '../models/Artists.js';  
 import Events from '../models/Events.js';
+import Orders from '../models/Orders.js'
+import Products from '../models/Products.js';
 
 // Create new artist (open)
 export const createArtist = async (req, res) => {
@@ -55,6 +57,166 @@ export const getAllArtists = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+//functions to get the product data 
+// Function to get product distribution based on order counts
+async function getProductDistribution(artistId) {
+  try {
+    // First get all orders that contain products from this artist
+    const orders = await Orders.find({
+      artistIds: artistId,
+      status: { $ne: 'cancelled' } // Exclude cancelled orders
+    });
+
+    // Create a map to store product order counts
+    const productOrderCounts = {};
+
+    // Go through each order and count products
+    orders.forEach(order => {
+      order.items.forEach(item => {
+        if (!productOrderCounts[item.name]) {
+          productOrderCounts[item.name] = {
+            count: 0,
+            totalQuantity: 0
+          };
+        }
+        productOrderCounts[item.name].count += 1;
+        productOrderCounts[item.name].totalQuantity += item.quantity;
+      });
+    });
+
+    // Format the data for the pie chart
+    const formattedProductData = Object.entries(productOrderCounts).map(([name, data]) => ({
+      name,
+      value: data.totalQuantity // Using total quantity ordered as the value
+    }));
+
+    // Sort by value in descending order
+    formattedProductData.sort((a, b) => b.value - a.value);
+
+    // If you want to limit to top N products, uncomment and modify this line
+    // return formattedProductData.slice(0, 5);
+
+    return formattedProductData;
+  } catch (error) {
+    console.error('Error getting product distribution:', error);
+    throw error;
+  }
+}
+
+// Alternative method using aggregation pipeline for better performance
+async function getProductDistributionAggregated(artistId) {
+  try {
+    const productDistribution = await Orders.aggregate([
+      // Match orders for this artist that aren't cancelled
+      {
+        $match: {
+          artistIds: artistId,
+          status: { $ne: 'cancelled' }
+        }
+      },
+      // Unwind the items array to process each item separately
+      {
+        $unwind: '$items'
+      },
+      // Group by product name and sum quantities
+      {
+        $group: {
+          _id: '$items.name',
+          totalQuantity: { $sum: '$items.quantity' }
+        }
+      },
+      // Format the output to match the required structure
+      {
+        $project: {
+          name: '$_id',
+          value: '$totalQuantity',
+          _id: 0
+        }
+      },
+      // Sort by value in descending order
+      {
+        $sort: { value: -1 }
+      }
+    ]);
+
+    return productDistribution;
+  } catch (error) {
+    console.error('Error getting product distribution:', error);
+    throw error;
+  }
+}
+
+//get artist details for artist dashboard
+export const dashBoard = async (req, res) => {
+  try {
+    // Get artist details from token (assuming you have middleware to decode JWT)
+    const artistId = req.user.id; // Replace with actual JWT decode logic
+
+    // Get artist details
+    const artist = await Artists.findOne({ id: artistId });
+    if (!artist) {
+      return res.status(404).json({ message: "Artist not found" });
+    }
+
+    // Get sales data for last 6 months
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+    const orders = await Orders.find({
+      artistIds: artistId,
+      createdAt: { $gte: sixMonthsAgo }
+    });
+
+    // Calculate monthly sales
+    const salesData = Array(6).fill(0).map((_, index) => {
+      const date = new Date();
+      date.setMonth(date.getMonth() - index);
+      const month = date.toLocaleString('default', { month: 'short' });
+      const monthOrders = orders.filter(order => {
+        const orderDate = new Date(order.createdAt);
+        return orderDate.getMonth() === date.getMonth() &&
+               orderDate.getFullYear() === date.getFullYear();
+      });
+      return {
+        month,
+        sales: monthOrders.reduce((sum, order) => sum + order.totalAmount, 0)
+      };
+    }).reverse();
+
+    // Get product distribution using the aggregation method
+    const productData = await getProductDistributionAggregated(artistId);
+
+    // Calculate key metrics
+    const totalRevenue = orders.reduce((sum, order) => sum + order.totalAmount, 0);
+    const completedOrders = orders.filter(order => order.status === 'delivered').length;
+    const rating = artist.rating || 0;
+
+    return res.status(200).json({
+      artist: {
+        name: artist.name,
+        businessName: artist.businessName,
+        profileImage: artist.profileImage,
+        specialization: artist.specialization,
+        city: artist.city,
+        state: artist.state
+      },
+      salesData,
+      productData,
+      metrics: {
+        totalRevenue,
+        completedOrders,
+        rating
+      }
+    });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+
 
 //Get artist complete details
 export const getArtistsDetails = async (req, res) => {

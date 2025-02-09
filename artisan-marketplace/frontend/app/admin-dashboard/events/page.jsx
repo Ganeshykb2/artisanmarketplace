@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { format } from 'date-fns'
-
+import Image from 'next/image'
 export default function EventsList() {
   const [events, setEvents] = useState([])
   const [isLoading, setIsLoading] = useState(true)
@@ -42,10 +42,12 @@ export default function EventsList() {
         {events.map((event) => (
           <div key={event.eventId} className="bg-white shadow-md rounded-lg overflow-hidden flex">
             <div className="w-1/3">
-              <img 
+              <Image 
                 src={event.images[0] || '/placeholder.svg?height=200&width=200'} 
                 alt={event.name} 
                 className="w-full h-full object-cover"
+                width={400}
+                height={400}
               />
             </div>
             <div className="w-2/3 p-4">

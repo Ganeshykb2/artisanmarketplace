@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Image from 'next/image';
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { message } from 'antd';
@@ -14,11 +15,13 @@ import { message } from 'antd';
 // Component for displaying image previews
 const ImagePreview = ({ image, onRemove, index }) => (
   <div className="relative inline-block mr-2 mb-2">
-    <img src={image} alt={`Preview ${index + 1}`} className="w-24 h-24 object-cover rounded-md" />
+    <Image src={image} alt={`Preview ${index + 1}`} className="w-24 h-24 object-cover rounded-md" width={400}
+      height={400} />
     <button
       type="button"
       onClick={() => onRemove(index)}
       className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold"
+      
     >
       X
     </button>
@@ -159,7 +162,7 @@ export default function AddNewEventPage() {
               <Input type="file" id="images" accept="image/*" multiple onChange={handleImageChange} className="mt-1 block w-full" />
               <div className="mt-2">
                 {images.map((image, index) => (
-                  <ImagePreview key={index} image={image} onRemove={removeImage} index={index} />
+                  <ImagePreview key={index} image={image} onRemove={removeImage} index={index} width={400} height={400} />
                 ))}
               </div>
               {images.length > 0 && <p className="mt-1 text-sm text-gray-600">{images.length} image(s) selected</p>}

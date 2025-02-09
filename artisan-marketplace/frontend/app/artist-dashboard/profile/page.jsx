@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
-
+import Image from 'next/image';
 export default function ArtistProfile() {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -202,10 +202,12 @@ export default function ArtistProfile() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-1">
           <div className="relative">
-            <img
+            <Image
               src={artist.profileImage}
               alt={artist.name}
               className="w-full rounded-lg shadow-lg mb-4"
+              width={400}
+              height={400}
             />
             {isEditing && (
               <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg">

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChevronLeft, ChevronRight, Users } from 'lucide-react';
+import Image from 'next/image';
 
 const useImageCarousel = (images) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -76,11 +77,11 @@ function EventCard({ event }) {
     <Card>
       {event.images && event.images.length > 0 ? (
         <div className="relative">
-          <img 
+          <Image
             src={event.images[currentImageIndex] || '/placeholder.svg?height=200&width=300'} 
             alt={event.name} 
-            width={300} 
-            height={200} 
+            width={400} 
+            height={400} 
             className="w-full h-48 object-cover"
           />
           {event.images.length > 1 && (

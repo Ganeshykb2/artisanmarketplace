@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useUser } from '@/app/UserProvider';
+import Image from 'next/image';
 
 const useImageCarousel = (images) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -48,7 +49,8 @@ export default function ProductsPage({ error }) {
 
       fetchProducts();
     }
-  }, [userId?.value]);
+  }, [userId?.value,error]);
+  
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
@@ -73,7 +75,7 @@ function ProductCard({ product }) {
   return (
     <Card>
       <div className="relative">
-        <img 
+        <Image
           src={product.images[currentImageIndex] || '/placeholder.svg?height=200&width=300'} 
           alt={product.name} 
           width={300} 

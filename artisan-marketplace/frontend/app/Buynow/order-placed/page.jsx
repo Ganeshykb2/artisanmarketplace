@@ -1,8 +1,8 @@
 'use client'
 
-import { notFound } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { CheckCircle } from 'lucide-react'
+import Link from 'next/link';
 
 
 export default function OrderSummary({ searchParams }) {
@@ -26,7 +26,7 @@ export default function OrderSummary({ searchParams }) {
         setOrder(result?.order);
     }
     fetchOders();
-  },[]);
+  },[orderId]);
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -68,12 +68,12 @@ export default function OrderSummary({ searchParams }) {
           </div>
         </div>
         <div className="mt-8 text-center">
-          <a 
-            href="/"
-            className="text-blue-500 hover:text-blue-600 transition-colors duration-200"
+        <Link 
+            href="/" 
+            className="text-blue-500 hover:text-blue-600 transition-colors duration-200" 
           >
             Return to Home
-          </a>
+          </Link>
         </div>
       </div>
     </div>

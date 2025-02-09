@@ -5,11 +5,13 @@ import { useForm } from 'react-hook-form';
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea';
+import Image from 'next/image';
 
 // Component for displaying image previews
 const ImagePreview = ({ image, onRemove, index }) => (
   <div className="relative inline-block mr-2 mb-2">
-    <img src={image} alt={`Preview ${index + 1}`} className="w-24 h-24 object-cover rounded-md" />
+    <Image src={image} alt={`Preview ${index + 1}`} className="w-24 h-24 object-cover rounded-md" width={400} height={400}
+    />
     <button
       type="button"
       onClick={() => onRemove(index)}
@@ -187,6 +189,8 @@ export default function AddNewProduct() {
               file:text-sm file:font-semibold
               file:bg-indigo-50 file:text-indigo-700
               hover:file:bg-indigo-100"
+            width={400}
+            height={400}
           />
           {errors.images && <p className="mt-1 text-sm text-red-600">{errors.images.message}</p>}
           <div className="mt-2">
@@ -244,6 +248,8 @@ export default function AddNewProduct() {
             step="0.01"
             {...register("discount", { min: 0, max: 100 })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            width={400}
+            height={400}
           />
           {errors.discount && <p className="mt-1 text-sm text-red-600">{errors.discount.message}</p>}
         </div>

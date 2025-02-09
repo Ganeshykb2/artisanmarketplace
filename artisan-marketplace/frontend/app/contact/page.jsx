@@ -86,7 +86,7 @@ export default function ContactUs() {
           <CardHeader>
             <CardTitle>Send Us a Message</CardTitle>
             <CardDescription>
-              We're here to help. Fill out the form below and we'll get back to you soon.
+              We&#39;re here to help. Fill out the form below and we&#39;ll get back to you soon.
             </CardDescription>
           </CardHeader>
           
@@ -104,7 +104,7 @@ export default function ContactUs() {
                 <CheckCircle className="h-4 w-4 text-green-500" />
                 <AlertTitle>Success</AlertTitle>
                 <AlertDescription>
-                  Your message has been sent successfully. We'll get back to you soon!
+                  Your message has been sent successfully. We&#39;ll get back to you soon!
                 </AlertDescription>
               </Alert>
             )}

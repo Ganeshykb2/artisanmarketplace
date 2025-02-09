@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Search } from 'lucide-react';
+import Image from 'next/image';
 
 const SearchBar = () => {
   const [query, setQuery] = useState('');
@@ -11,24 +12,25 @@ const SearchBar = () => {
   const getHighlightedText = (text, searchQuery) => {
     if (!text || !searchQuery) return text;
     const parts = text.split(new RegExp(`(${searchQuery})`, 'gi'));
-    return parts.map((part, index) => 
-      part.toLowerCase() === searchQuery.toLowerCase() ? 
-        <span key={index} className="bg-yellow-100">{part}</span> : part
+    return parts.map((part, index) =>
+      part.toLowerCase() === searchQuery.toLowerCase()
+        ? <span key={index} className="bg-yellow-100">{part}</span>
+        : part
     );
   };
 
-  const calculateRelevanceScore = (item, searchQuery) => {
+  // ✅ Wrapped calculateRelevanceScore inside useCallback
+  const calculateRelevanceScore = useCallback((item, searchQuery) => {
     if (!item || !searchQuery) return 0;
-    
+
     const query = searchQuery.toLowerCase();
     let score = 0;
-    
-    // Product specific scoring
+
     if (item.type === 'product') {
       const name = (item.name || '').toLowerCase();
       const description = (item.description || '').toLowerCase();
       const category = (item.category || '').toLowerCase();
-      
+
       if (name === query) score += 10;
       if (name.startsWith(query)) score += 8;
       if (name.includes(query)) score += 6;
@@ -37,13 +39,12 @@ const SearchBar = () => {
       if (item.averageRating >= 4) score += 2;
       if (item.salesCount > 100) score += 1;
     }
-    
-    // Artist specific scoring
+
     if (item.type === 'artist') {
       const name = (item.name || '').toLowerCase();
       const business = (item.businessName || '').toLowerCase();
       const about = (item.AboutHimself || '').toLowerCase();
-      
+
       if (name === query) score += 10;
       if (business === query) score += 9;
       if (name.startsWith(query)) score += 8;
@@ -54,32 +55,30 @@ const SearchBar = () => {
       if (item.verified) score += 2;
       if (item.rating >= 4) score += 2;
     }
-    
-    // Event specific scoring
+
     if (item.type === 'event') {
       const name = (item.name || '').toLowerCase();
       const description = (item.description || '').toLowerCase();
       const eventType = (item.eventType || '').toLowerCase();
       const location = (item.location || '').toLowerCase();
-      
+
       if (name === query) score += 10;
       if (name.startsWith(query)) score += 8;
       if (name.includes(query)) score += 6;
       if (eventType.includes(query)) score += 5;
       if (location.includes(query)) score += 4;
       if (description.includes(query)) score += 3;
-      
-      // Boost score for upcoming events
+
       if (item.dateOfEvent) {
         const eventDate = new Date(item.dateOfEvent);
         if (eventDate > new Date()) score += 2;
       }
     }
-    
-    return score;
-  };
 
-  const fetchSearchResults = async (searchQuery) => {
+    return score;
+  }, []); // No external dependencies needed
+
+  const fetchSearchResults = useCallback(async (searchQuery) => {
     if (!searchQuery.trim()) {
       setResults([]);
       return;
@@ -91,12 +90,11 @@ const SearchBar = () => {
     try {
       const response = await fetch(`http://localhost:5000/api/search/search/${encodeURIComponent(searchQuery)}`);
       if (!response.ok) throw new Error('Search failed');
-      
+
       const data = await response.json();
-      
-      // Score and sort results
+
       const scoredResults = data
-        .filter(item => item && item.type) // Filter out any invalid items
+        .filter(item => item && item.type)
         .map(item => ({
           ...item,
           score: calculateRelevanceScore(item, searchQuery)
@@ -111,7 +109,7 @@ const SearchBar = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [calculateRelevanceScore]); // ✅ Dependency is stable now
 
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
@@ -119,19 +117,15 @@ const SearchBar = () => {
     }, 300);
 
     return () => clearTimeout(debounceTimer);
-  }, [query]);
+  }, [query, fetchSearchResults]);
 
   const getItemImage = (result) => {
     if (!result) return null;
-    
     switch (result.type) {
-      case 'artist':
-        return result.profileImage || null;
+      case 'artist': return result.profileImage || null;
       case 'product':
-      case 'event':
-        return result.images?.[0] || null;
-      default:
-        return null;
+      case 'event': return result.images?.[0] || null;
+      default: return null;
     }
   };
 
@@ -220,10 +214,9 @@ const SearchBar = () => {
               key={result.type + '-' + (result.productId || result.id || result.eventId)}
               className="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
               onClick={() => {
-                // Handle navigation based on type
                 const path = result.type === 'product' ? `/exploreproducts/${result.name}` :
-                           result.type === 'artist' ? `/artisans/${result.name}` :
-                           `/events/${result.name}`;
+                             result.type === 'artist' ? `/artisans/${result.name}` :
+                             `/events/${result.name}`;
                 window.location.href = path;
                 setShowDropdown(false);
               }}
@@ -231,10 +224,12 @@ const SearchBar = () => {
               <div className="flex items-start">
                 {getItemImage(result) && (
                   <div className="w-10 h-10 rounded-md overflow-hidden mr-3 flex-shrink-0">
-                    <img 
+                    <Image
                       src={getItemImage(result)} 
-                      alt="" 
+                      alt=""
                       className="w-full h-full object-cover"
+                      width={40}
+                      height={40}
                     />
                   </div>
                 )}

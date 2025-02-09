@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Checkbox } from '@/components/ui/checkbox'
+import Image from 'next/image';
 import { toast } from '@/hooks/use-toast'
 import { MultiSelect } from '@/components/ui/multi-select'
 import { useForm } from 'react-hook-form'
@@ -182,7 +182,7 @@ export default function SignupPage() {
                     {image && (
                       <div className="mt-2 relative mx-auto">
                         <div className="w-32 h-32 rounded-full overflow-hidden mx-auto relative">
-                          <img src={image} alt="Profile Preview" className="w-full h-full object-cover" />
+                          <Image src={image} alt="Profile Preview" className="w-full h-full object-cover" width={400} height={400}/>
                         </div>
                         <button 
                             type="button"

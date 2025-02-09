@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell } from 'recharts'
 import { MapPin } from 'lucide-react'
+import Image from 'next/image';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042']
 
@@ -55,10 +56,12 @@ export default function ArtisanDashboard() {
       <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
           <div className="flex items-center mb-4 md:mb-0">
-            <img 
+            <Image
               src={artist?.profileImage || "/default-profile.jpg"} 
               alt={`${artist?.name || 'Artist'}'s Photo`} 
               className="w-24 h-24 rounded-full object-cover border-4 border-gray-100"
+              width={400}
+              height={400}
             />
             <div className="ml-6">
               <h1 className="text-3xl font-bold text-gray-900">{artist?.name || 'Unknown Artist'}</h1>

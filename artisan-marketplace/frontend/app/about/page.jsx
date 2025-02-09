@@ -24,7 +24,7 @@ export default function AboutUs() {
             Through our platform, we aim to bridge the gap between traditional artisans and modern buyers, creating opportunities for sustainable livelihoods. By leveraging technology, we make their exquisite crafts accessible to people worldwide.
           </p>
           <p className="text-lg">
-            Join us in our journey to bring the beauty of Varanasi's handicrafts to the world, one artisan at a time.
+            Join us in our journey to bring the beauty of Varanasi&#39;s handicrafts to the world, one artisan at a time.
           </p>
         </div>
         <Image src="/artisan-at-work.jpg" alt="Artisan at work" width={600} height={400} className="w-full rounded-lg shadow-md" />
@@ -38,7 +38,7 @@ export default function AboutUs() {
             <CardDescription>Artisans Supported</CardDescription>
           </CardHeader>
           <CardContent>
-            We've helped over 500 artisans showcase their products and reach a wider audience.
+            We&#39;ve helped over 500 artisans showcase their products and reach a wider audience.
           </CardContent>
         </Card>
         <Card>
@@ -56,7 +56,7 @@ export default function AboutUs() {
             <CardDescription>Events Organized</CardDescription>
           </CardHeader>
           <CardContent>
-            We've organized over 50 events to promote Varanasi's handicrafts and connect artisans with customers.
+            We&#39;ve organized over 50 events to promote Varanasi&#39;s handicrafts and connect artisans with customers.
           </CardContent>
         </Card>
       </div>
@@ -82,7 +82,7 @@ export default function AboutUs() {
               <CardDescription>{member.role}</CardDescription>
             </CardHeader>
             <CardContent>
-              <p>Brief description of {member.name}'s role and passion for supporting artisans.</p>
+              <p>Brief description of {member.name}&#39;s role and passion for supporting artisans.</p>
             </CardContent>
           </Card>
         ))}

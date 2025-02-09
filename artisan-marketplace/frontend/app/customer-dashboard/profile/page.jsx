@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react';
-
+import Image from 'next/image'
 export default function ArtistProfile() {
   const [isEditing, setIsEditing] = useState(false);
   const [artist, setArtist] = useState({
@@ -59,7 +59,7 @@ export default function ArtistProfile() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-1">
-          <img
+          <Image
             src={artist.profileImage}
             alt={artist.name}
             className="w-full rounded-lg shadow-lg mb-4"

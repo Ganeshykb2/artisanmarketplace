@@ -101,7 +101,7 @@ export default function LoginPage() {
           </Tabs>
         </CardContent>
         <CardFooter className="flex justify-center">
-          <p>Don't have an account? <a href="/signup" className="text-primary hover:underline">Sign up</a></p>
+          <p>Don&#39;t have an account? <a href="/signup" className="text-primary hover:underline">Sign up</a></p>
         </CardFooter>
       </Card>
     </div>

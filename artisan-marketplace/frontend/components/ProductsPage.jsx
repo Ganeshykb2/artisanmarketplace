@@ -4,34 +4,29 @@ import Products from '@/components/ui/Products';
 import { Search } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 export default function ProductsPage() {
   const pathname = usePathname();
-  
+
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [priceRange, setPriceRange] = useState('all');
 
   // Effect to handle URL parameters
   useEffect(() => {
-    // Get the product name from the URL path
     const pathParts = pathname.split('/');
-    // Remove empty strings and 'exploreproducts' from the path parts
     const filteredParts = pathParts.filter(part => part && part !== 'exploreproducts');
-    
-    // If there's a product name in the path
+
     if (filteredParts.length > 0) {
-      // Decode the URL-encoded product name and set it as the search term
       const decodedProductName = decodeURIComponent(filteredParts[0]);
       setSearchTerm(decodedProductName);
     }
   }, [pathname]);
 
   const handleSearch = useCallback((e) => {
-    const newSearchTerm = e.target.value;
-    setSearchTerm(newSearchTerm);
-  });
+    setSearchTerm(e.target.value);
+  }, []); // Empty dependency array
 
   const handleCategoryChange = useCallback((value) => {
     setCategoryFilter(value);
@@ -59,6 +54,7 @@ export default function ProductsPage() {
             return true;
         }
       })();
+
       return matchesSearch && matchesCategory && matchesPriceRange;
     });
   }, [searchTerm, categoryFilter, priceRange]);
@@ -66,7 +62,7 @@ export default function ProductsPage() {
   return (
     <div className="container mx-auto px-6">
       <h1 className="text-4xl font-semibold mb-6 text-center">All Products</h1>
-      
+
       <div className="flex flex-col md:flex-row gap-4 mb-8">
         <div className="relative flex-grow">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -77,7 +73,7 @@ export default function ProductsPage() {
             onChange={handleSearch}
           />
         </div>
-        
+
         <Select value={categoryFilter} onValueChange={handleCategoryChange}>
           <SelectTrigger className="w-full md:w-[180px]">
             <SelectValue placeholder="Category" />

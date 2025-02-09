@@ -6,9 +6,9 @@ export async function GET() {
   try {
     const cookieStore = await cookies();
     cookieStore.delete('token', { path: '/' }); // Make sure cookie deletion is scoped correctly
-    
+    const API_NOT_BASE = process.env.NOT_BASE;
     // Redirect to the login page after successful logout
-    return NextResponse.redirect('http://localhost:3000/admin-dashboard/login');
+    return NextResponse.redirect(`${API_NOT_BASE}/admin-dashboard/login`);
   } catch (err) {
     console.error('Error clearing cookies:', err);
     return NextResponse.json(

@@ -18,7 +18,8 @@ export default function Home() {
     // Fetch Artist of the Month
     const fetchArtistOfTheMonth = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/artists/artist-of-the-month');
+        const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+        const response = await fetch(`${API_BASE_URL}/artists/artist-of-the-month`);
         const data = await response.json();
         if (data.artist) {
           setArtistOfTheMonth(data.artist);
@@ -31,7 +32,8 @@ export default function Home() {
     // Fetch Upcoming Events
     const fetchUpcomingEvents = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/events/upcoming');
+        const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+        const response = await fetch(`${API_BASE_URL}/events/upcoming`);
         const data = await response.json();
         if (data.events) {
           setUpcomingEvents(data.events);

@@ -26,7 +26,8 @@ export async function POST(req) {
     const token = cookieStore.get("token");
 
     // Make API call to create the order
-    const response = await fetch("http://localhost:5000/api/orders/create", {
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const response = await fetch(`${API_BASE_URL}/orders/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -69,8 +70,8 @@ export async function GET(req){
             status: 400,
           });
         }
-
-        const response = await fetch(`http://localhost:5000/api/orders/${ordersParam}`,{
+        const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+        const response = await fetch(`${API_BASE_URL}/orders/${ordersParam}`,{
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

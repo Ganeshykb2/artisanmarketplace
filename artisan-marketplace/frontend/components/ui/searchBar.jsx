@@ -88,7 +88,8 @@ const SearchBar = () => {
     setError(null);
 
     try {
-      const response = await fetch(`http://localhost:5000/api/search/search/${encodeURIComponent(searchQuery)}`);
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const response = await fetch(`${API_BASE_URL}/search/search/${encodeURIComponent(searchQuery)}`);
       if (!response.ok) throw new Error('Search failed');
 
       const data = await response.json();

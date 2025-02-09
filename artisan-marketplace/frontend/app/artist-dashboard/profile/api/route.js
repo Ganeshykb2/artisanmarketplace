@@ -5,7 +5,8 @@ export async function GET() {
     try {
       const cookieStore = await cookies();
       const token = cookieStore.get('token');
-      const response = await fetch('http://localhost:5000/api/artists/getartistdetails', {
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const response = await fetch(`${API_BASE_URL}/artists/getartistdetails`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -28,8 +29,8 @@ export  async function PUT(request) {
       const cookieStore = await cookies();
       const token = cookieStore.get('token');
       const body = await request.json();
-      
-      const response = await fetch('http://localhost:5000/api/artists/update', {
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const response = await fetch(`${API_BASE_URL}/artists/update`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -7,12 +7,12 @@ export async function GET() {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get('token');
-
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
     if (!token?.value) {
       return NextResponse.json({ message: 'Authentication token missing' }, { status: 401 });
     }
 
-    const response = await fetch('http://localhost:5000/api/admins/unverified-artists', {
+    const response = await fetch(`${API_BASE_URL}/admins/unverified-artists`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token.value}` },
     });
@@ -45,7 +45,7 @@ export async function PUT() {
     const cookieStore = await cookies();
     const token = cookieStore.get("token");
 
-    const response = await fetch("http://localhost:5000/api/admins/verify-all", {
+    const response = await fetch(`${API_BASE_URL}/admins/verify-all`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

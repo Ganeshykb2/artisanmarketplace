@@ -6,12 +6,12 @@ export async function GET() {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get('token');
-
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
     if (!token?.value) {
       return NextResponse.json({ message: 'Authentication token missing' }, { status: 401 });
     }
 
-    const response = await fetch('http://localhost:5000/api/admins/artists', {
+    const response = await fetch(`${API_BASE_URL}/admins/artists`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token.value}` },
     });
@@ -42,7 +42,7 @@ export async function PUT(req) {
       return NextResponse.json({ message: 'Authentication token missing' }, { status: 401 });
     }
 
-    const response = await fetch(`http://localhost:5000/api/admins/verify-artist/${artistId}`, {
+    const response = await fetch(`${API_BASE_URL}/admins/verify-artist/${artistId}`, {
       method: 'PUT',
       headers: { Authorization: `Bearer ${token.value}` },
     });

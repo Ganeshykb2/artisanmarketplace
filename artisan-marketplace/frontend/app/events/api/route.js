@@ -4,7 +4,8 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const response = await fetch("http://localhost:5000/api/events/getAllEvents", {
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const response = await fetch(`${API_BASE_URL}/events/getAllEvents`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -47,9 +48,9 @@ export async function POST(req) {
 
     // Log token for debugging (remove in production)
     console.log('Token found:', token?.value);
-
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
     const response = await fetch(
-      `http://localhost:5000/api/events/${eventId}/register`,
+      `${API_BASE_URL}/api/events/${eventId}/register`,
       {
         method: "POST",
         headers: {

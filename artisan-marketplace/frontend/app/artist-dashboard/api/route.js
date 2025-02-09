@@ -7,8 +7,8 @@ export async function GET() {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get('token');
-
-    const response = await fetch('http://localhost:5000/api/artists/dashboard', {
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const response = await fetch(`${API_BASE_URL}/artists/dashboard`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

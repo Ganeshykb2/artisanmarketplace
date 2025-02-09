@@ -5,8 +5,8 @@ export async function GET() {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get("token");
-
-    const response = await fetch("http://localhost:5000/api/contact/", {
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const response = await fetch(`${API_BASE_URL}/contact/`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -45,7 +45,7 @@ export async function DELETE(request) {
       return NextResponse.json({ message: "Message ID is required" }, { status: 400 });
     }
 
-    const response = await fetch(`http://localhost:5000/api/contact/delete/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/contact/delete/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

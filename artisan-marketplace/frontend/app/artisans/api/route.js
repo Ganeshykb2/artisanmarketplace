@@ -1,8 +1,10 @@
 //frontend/app/artisans/api/route.js
 import { NextResponse } from "next/server";
+
 export async function GET() {
   try {
-    const response = await fetch("http://localhost:5000/api/artists/", {
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const response = await fetch(`${API_BASE_URL}/artists/`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

@@ -7,8 +7,8 @@ export async function GET() {
     const cartCookie = cookieStore.get("cart");
     const token = cookieStore.get('token');
     let cart = cartCookie ? JSON.parse(cartCookie.value) : [];
-
-    const response = await fetch('http://localhost:5000/api/carts/get-cart',{
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const response = await fetch(`${API_BASE_URL}/carts/get-cart`,{
       method: 'GET',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token?.value}` },
   })
@@ -67,8 +67,8 @@ export async function POST(req) {
         sameSite: 'strict',
         path: '/',
     });
-
-    const response = await fetch('http://localhost:5000/api/carts/add-item',{
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const response = await fetch(`${API_BASE_URL}/carts/add-item`,{
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token?.value}` },
         body: JSON.stringify({productId}),
@@ -108,8 +108,8 @@ export async function PUT(req,res){
     try{
       const cookieStore = await cookies();
       const token = cookieStore.get('token');
-
-      const response = await fetch('http://localhost:5000/api/carts/remove-item',{
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const response = await fetch(`${API_BASE_URL}/carts/remove-item`,{
           method: 'PUT',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token?.value}` },
           body: JSON.stringify({productId}),

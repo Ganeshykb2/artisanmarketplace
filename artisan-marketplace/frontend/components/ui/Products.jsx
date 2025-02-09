@@ -9,7 +9,8 @@ function Products({ productType, filterFunction }) {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/products/all-products');
+        const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+        const response = await fetch(`${API_BASE_URL}/products/all-products`);
         if (!response.ok) {
           throw new Error('Failed to fetch products');
         }
@@ -25,7 +26,8 @@ function Products({ productType, filterFunction }) {
     // Fetch Featured Products
     const fetchFeaturedProducts = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/products/featured-products');
+        const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+        const response = await fetch(`${API_BASE_URL}/products/featured-products`);
         const data = await response.json();
         if (data.products) {
           setProducts(data.products);

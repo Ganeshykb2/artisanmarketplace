@@ -12,7 +12,8 @@ export async function GET() {
     }
 
     // Make an API call to fetch orders for the customer
-    const response = await fetch('http://localhost:5000/api/orders/orders', {
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const response = await fetch(`${API_BASE_URL}/orders/orders`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token.value}` },
     });

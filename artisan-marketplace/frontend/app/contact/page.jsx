@@ -41,7 +41,8 @@ export default function ContactUs() {
     });
 
     try {
-      const response = await fetch('http://localhost:5000/api/contact', {
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const response = await fetch(`${API_BASE_URL}/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

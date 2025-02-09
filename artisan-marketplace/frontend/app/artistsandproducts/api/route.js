@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
-    const response = await fetch('http://localhost:5000/api/products/getArtistWithProducts');
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const response = await fetch(`${API_BASE_URL}/products/getArtistWithProducts`);
     if (!response.ok) {
       throw new Error('Failed to fetch data from the server');
     }

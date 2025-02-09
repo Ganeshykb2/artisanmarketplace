@@ -5,9 +5,9 @@ export async function GET() {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get('token');
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-
-    const response = await fetch('http://localhost:5000/api/orders/artist/orders', {
+    const response = await fetch(`${API_BASE_URL}/orders/artist/orders`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -52,8 +52,8 @@ export async function PUT(request) {
         { status: 400 }
       );
     }
-
-    const response = await fetch(`http://localhost:5000/api/orders/${orderId}/status`, {
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const response = await fetch(`${API_BASE_URL}/orders/${orderId}/status`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

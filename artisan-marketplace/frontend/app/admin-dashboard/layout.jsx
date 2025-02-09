@@ -19,7 +19,8 @@ const AdminLayout = ({ children }) => {
   
       if (response.ok) {
         alert('You have been logged out successfully.');
-        window.location.href = 'http://localhost:3000/admin-dashboard/login'; // Redirect to the login page
+        const API_NOT_BASE = process.env.NOT_BASE;
+        window.location.href = `${API_NOT_BASE}/admin-dashboard/login`; // Redirect to the login page
       } else {
         const data = await response.json();
         console.error('Logout failed:', data.message);
